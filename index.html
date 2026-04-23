@@ -2,98 +2,103 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STUDIO MURENA - OS 96</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDIO MURENA - CRT OS</title>
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root { --monitor-color: #333; }
+        * { box-sizing: border-box; }
         
         body { 
-            background: #008080; 
-            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-            margin: 0; padding: 0;
+            background: #1a1a1a; margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; width: 100vw; overflow: hidden;
             font-family: "Courier New", monospace;
-            height: 100vh; width: 100vw;
-            overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* DVD BOUNCING LOGO */
-        #dvd-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 40px);
-            pointer-events: none; z-index: 0;
-        }
-        #dvd-logo {
-            position: absolute; font-size: clamp(18px, 4vw, 24px); font-weight: bold;
-            color: #00ff00; text-shadow: 2px 2px #000; white-space: nowrap;
-        }
-
-        /* DESKTOP */
-        #desktop {
-            flex-grow: 1; position: relative; padding: 15px; z-index: 1;
-            display: flex; flex-direction: column; align-content: flex-start; flex-wrap: wrap; gap: 15px;
+        /* CORNICE MONITOR HARDWARE */
+        #monitor-bezel {
+            width: 95vw; max-width: 900px;
+            aspect-ratio: 4 / 3;
+            background: var(--monitor-color);
+            border-radius: 40px;
+            padding: 30px;
+            box-shadow: inset 0 0 50px #000, 0 50px 100px rgba(0,0,0,0.5);
+            border: 10px solid #222;
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        .icon {
-            width: 80px; text-align: center; cursor: pointer; color: white;
-            text-shadow: 1px 1px #000; font-size: 11px;
+        /* SCHERMO CRT */
+        #screen {
+            width: 100%; height: 100%;
+            background: #008080;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            border: 15px solid #111;
+            display: flex; flex-direction: column;
+            box-shadow: inset 0 0 20px #000;
         }
-        .icon span { font-size: 35px; display: block; margin-bottom: 5px; }
 
-        /* WINDOW SYSTEM */
-        .window {
-            position: absolute; background: #c0c0c0; border: 3px outset #fff;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.5); display: none;
-            flex-direction: column; z-index: 10; width: 90vw; max-width: 800px;
+        /* EFFETTO SCANLINES */
+        #screen::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 100;
         }
-        .title-bar {
-            background: linear-gradient(90deg, #000080, #1084d0); color: white;
-            padding: 4px 10px; font-weight: bold; display: flex;
-            justify-content: space-between; align-items: center; cursor: move;
-        }
-        .window-content { padding: 10px; overflow-y: auto; max-height: 70vh; color: #000; }
 
-        /* LOGICA GIOCO ORIGINALE IN FINESTRA */
-        #animation-zone {
-            height: 100px; background: #222; margin-bottom: 10px; border: 3px inset #808080;
-            display: flex; align-items: flex-end; padding: 5px; gap: 5px; overflow-x: auto;
+        /* LOGO CENTRALE GLITCH */
+        #center-logo {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(20px, 5vw, 40px); font-weight: bold;
+            z-index: 0; text-align: center; pointer-events: none;
+            animation: color-shift 2s infinite, glitch-txt 0.5s infinite;
         }
-        #mclovin {
-            width: 40px; height: 40px; background: #f0d0b0; border: 2px solid #000;
-            position: relative; flex-shrink: 0; display: flex; justify-content: center;
+
+        @keyframes color-shift {
+            0% { color: #00ff00; } 33% { color: #ff00ff; } 66% { color: #00ffff; } 100% { color: #00ff00; }
         }
-        #mclovin::before { content: "🕶️"; font-size: 14px; }
-        .guest-member { width: 30px; height: 30px; background: #fff; border: 1px solid #000; font-size: 15px; display:flex; align-items:center; justify-content:center; animation: pop 0.3s; }
-        @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes glitch-txt {
+            0% { transform: translate(-50%, -50%) skew(0deg); opacity: 1; }
+            10% { transform: translate(-51%, -49%) skew(5deg); opacity: 0.8; }
+            20% { transform: translate(-49%, -51%) skew(-5deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) skew(0deg); }
+        }
+
+        #desktop { flex-grow: 1; position: relative; padding: 15px; z-index: 1; display: flex; flex-direction: column; gap: 15px; }
+        .icon { width: 70px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; font-size: 9px; }
+        .icon span { font-size: 30px; display: block; }
+
+        /* WINDOWS */
+        .window { position: absolute; background: #c0c0c0; border: 3px outset #fff; display: none; flex-direction: column; z-index: 10; width: 85%; }
+        .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .window-content { padding: 10px; overflow-y: auto; max-height: 50vh; color: #000; font-size: 12px; }
+
+        /* GAME MCLOVIN STYLES */
+        #animation-zone { height: 80px; background: #222; margin-bottom: 5px; border: 3px inset #808080; display: flex; align-items: flex-end; padding: 5px; gap: 5px; overflow-x: auto; }
+        #mclovin { width: 35px; height: 35px; background: #f0d0b0; border: 2px solid #000; position: relative; flex-shrink: 0; display: flex; justify-content: center; }
+        #mclovin::before { content: "🕶️"; font-size: 12px; position: absolute; top: 0; }
+        #mclovin::after { content: "👕"; font-size: 18px; position: absolute; bottom: -2px; }
         
-        #grid-container {
-            display: grid; grid-template-columns: repeat(15, 1fr); gap: 1px;
-            background: #808080; border: 2px inset #fff; padding: 2px;
-        }
-        .cell {
-            aspect-ratio: 1/1; background: #c0c0c0; border: 1.5px outset #fff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: bold; cursor: pointer;
-        }
+        .guest-member { width: 25px; height: 25px; background: #fff; border: 1px solid #000; font-size: 14px; display:flex; align-items:center; justify-content:center; }
+        #grid-container { display: grid; grid-template-columns: repeat(15, 1fr); gap: 1px; background: #808080; border: 2px inset #fff; }
+        .cell { aspect-ratio: 1/1; background: #c0c0c0; border: 1px outset #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; cursor: pointer; }
         .cell.revealed { border: 0.5px solid #999; background: #bdbdbd; }
         .cell.found { background: #ffff00 !important; }
-        .n1 { color: blue; } .n2 { color: green; } .n3 { color: red; }
 
-        /* TASKBAR & CLOCK */
-        #taskbar {
-            height: 40px; background: #c0c0c0; border-top: 3px outset #fff;
-            display: flex; align-items: center; padding: 2px; z-index: 9999;
-        }
-        .start-btn { background: #c0c0c0; border: 2px outset #fff; padding: 2px 8px; font-weight: bold; }
-        #glitch-clock {
-            margin-left: auto; padding: 0 10px; font-weight: bold; font-size: 12px;
-            border-left: 2px inset #fff; height: 100%; display: flex; align-items: center;
-            background: #bdbdbd; min-width: 100px;
-        }
-        .glitch-text { animation: g-anim 0.2s infinite; color: red; }
-        @keyframes g-anim { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        button { background: #c0c0c0; border: 2px outset #fff; padding: 4px 10px; cursor: pointer; font-family: inherit; }
+        /* TASKBAR */
+        #taskbar { height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
+        #glitch-clock { margin-left: auto; padding: 0 10px; font-weight: bold; border-left: 2px inset #fff; background: #bdbdbd; font-size: 11px; height: 100%; display: flex; align-items: center; }
+        
+        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-family: inherit; font-size: 11px; }
         button:active { border-style: inset; }
-        a { color: #000080; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            #monitor-bezel { padding: 10px; border-radius: 20px; border-width: 5px; }
+            #screen { border-width: 5px; }
+        }
     </style>
 </head>
 <body>
@@ -102,182 +107,84 @@
     <source src="jazzhighlanders 8bit [2026-04-22 140712].wav" type="audio/wav">
 </audio>
 
-<div id="dvd-container"><div id="dvd-logo">STUDIOMURENA.NET</div></div>
+<div id="monitor-bezel">
+    <div id="screen">
+        <div id="center-logo">STUDIOMURENA.NET</div>
+        
+        <div id="desktop">
+            <div class="icon" onclick="openWin('win-game')"><span>🎮</span>GAME.EXE</div>
+            <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
+            <div class="icon" onclick="openWin('win-merch')"><span>👕</span>SHOP.URL</div>
+            <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
+        </div>
 
-<div id="desktop">
-    <div class="icon" onclick="openWin('win-game')"><span>🎮</span>GAME.EXE</div>
-    <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
-    <div class="icon" onclick="openWin('win-merch')"><span>👕</span>SHOP.URL</div>
-    <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
-</div>
+        <div id="win-game" class="window" style="top: 5%; left: 5%; width: 90%;">
+            <div class="title-bar"><span>McLovin_Sweeper.exe</span><button onclick="closeWin('win-game')">X</button></div>
+            <div class="window-content">
+                <div id="animation-zone"><div id="mclovin"></div></div>
+                <div id="status-game" style="font-size:10px; color:#000; font-weight:bold; background:#0f0; padding:2px; margin-bottom:5px;">TROVA I GUEST!</div>
+                <div id="grid-container"></div>
+            </div>
+        </div>
 
-<div id="win-game" class="window" style="top: 10px; left: 10px;">
-    <div class="title-bar"><span>McLovin_Sweeper.exe</span><button onclick="closeWin('win-game')">X</button></div>
-    <div class="window-content">
-        <div id="animation-zone"><div id="mclovin"></div></div>
-        <div id="status-game" style="font-size:10px; margin-bottom:5px; font-weight:bold;">TROVA I 10 GUESTS!</div>
-        <div id="grid-container"></div>
+        <div id="win-bio" class="window" style="top: 10%; left: 10%;">
+            <div class="title-bar"><span>Bio_Murena.txt</span><button onclick="closeWin('win-bio')">X</button></div>
+            <div class="window-content">
+                <p>Dopo aver pubblicato il suo primo lavoro strumentale nell'estate del 2018, <b>Crunchy Bites</b>, il gruppo si è esibito a JazzMI, MusicalZOO e Jazz On The Road. Il gruppo inizialmente composto da un trio formatosi al Conservatorio di Milano, successivamente si amplia orientandosi verso sonorità rap con l'ingresso di Lorenzo Carminati alla voce.</p>
+                <p>Nel 2021 pubblicano l'album eponimo. Nel 2023 esce <b>WadiruM</b> (prod. Tommaso Colliva) e aprono i Red Hot Chili Peppers agli I-Days. Il 9 maggio 2025 pubblicano <b>Notturno</b>.</p>
+            </div>
+        </div>
+
+        <div id="win-merch" class="window" style="top: 20%; left: 20%; width: 60%;">
+            <div class="title-bar"><span>Shop.url</span><button onclick="closeWin('win-merch')">X</button></div>
+            <div class="window-content" style="text-align:center;">
+                <a href="https://www.nancymerch.it/studio-murena/" target="_blank" style="color:blue;">VAI ALLO STORE UFFICIALE</a>
+            </div>
+        </div>
+
+        <div id="win-spotify" class="window" style="top: 5%; right: 5%; width: 300px;">
+            <div class="title-bar"><span>Spotify</span><button onclick="closeWin('win-spotify')">X</button></div>
+            <div class="window-content">
+                <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px;">🎵 PLAY 8-BIT</button>
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/37Z0tNInE0Yn3P0A23jF8m?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <div id="taskbar">
+            <div style="background:#c0c0c0; border:2px outset #fff; padding:0 5px; font-weight:bold; font-size:12px;">Start</div>
+            <div id="glitch-clock">--/--/----</div>
+        </div>
     </div>
-</div>
-
-<div id="win-bio" class="window" style="top: 50px; left: 20px;">
-    <div class="title-bar"><span>Bio_Murena.txt</span><button onclick="closeWin('win-bio')">X</button></div>
-    <div class="window-content" style="font-size: 13px; line-height: 1.4;">
-        <p>Dopo aver pubblicato il suo primo lavoro strumentale nell'estate del 2018, <b>Crunchy Bites</b>, il gruppo si è esibito a JazzMI, MusicalZOO e Jazz On The Road.</p>
-        <p>Il gruppo inizialmente composto da un trio formatosi al Conservatorio di Milano, successivamente si amplia verso sonorità rap con l'ingresso di Lorenzo Carminati alla voce. In formazione di sei elementi, nel 2021 pubblicano l'album eponimo con recensioni entusiastiche.</p>
-        <p>Hanno suonato al Mi Ami, Locus Festival, e collaborato con Dardust. Nel 2023 pubblicano <b>WadiruM</b> (prod. Tommaso Colliva) e aprono i concerti di Primal Scream e Red Hot Chili Peppers agli I-Days.</p>
-        <p>Il 9 maggio 2025 pubblicano l'album <b>Notturno</b>, anticipato dal singolo Jazzhighlanders.</p>
-    </div>
-</div>
-
-<div id="win-merch" class="window" style="top: 100px; left: 30px; width: 300px;">
-    <div class="title-bar"><span>Merch_Link.url</span><button onclick="closeWin('win-merch')">X</button></div>
-    <div class="window-content" style="text-align:center;">
-        <p>Vuoi il Merch ufficiale?</p>
-        <a href="https://www.nancymerch.it/studio-murena/" target="_blank">VAI ALLO STORE →</a>
-    </div>
-</div>
-
-<div id="win-spotify" class="window" style="top: 40px; right: 10px; width: 320px;">
-    <div class="title-bar"><span>Spotify_Player</span><button onclick="closeWin('win-spotify')">X</button></div>
-    <div class="window-content">
-        <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px;">🎵 PLAY 8-BIT BASE</button>
-        <iframe style="border-radius:12px" src="https://open.spotify.com/intl-it/artist/1rWbZmR5D63aZU60lMtVZx?si=7gjoduKtSb2KFMi8eSEWyA" width="100%" height="80" frameBorder="0" allow="autoplay; encrypted-media"></iframe>
-    </div>
-</div>
-
-<div id="taskbar">
-    <div class="start-btn">Start</div>
-    <div id="glitch-clock">--/--/----</div>
 </div>
 
 <script>
-    // --- DVD LOGO LOGIC ---
-    const logo = document.getElementById('dvd-logo');
-    let px = 0, py = 0, vx = 1.2, vy = 1.2;
-    function move() {
-        const cont = document.getElementById('dvd-container');
-        const mw = cont.clientWidth - logo.offsetWidth;
-        const mh = cont.clientHeight - logo.offsetHeight;
-        if (px >= mw || px <= 0) vx *= -1;
-        if (py >= mh || py <= 0) vy *= -1;
-        px += vx; py += vy;
-        logo.style.left = px + 'px'; logo.style.top = py + 'px';
-        requestAnimationFrame(move);
-    }
-    move();
-
-    // --- GLITCH CLOCK ---
+    // GLITCH CLOCK
     const clock = document.getElementById('glitch-clock');
     const dates = ["04/08/1992", () => new Date().toLocaleDateString('it-IT'), "18/06/2026"];
     let dIdx = 0;
     setInterval(() => {
-        clock.classList.add('glitch-text');
-        setTimeout(() => {
-            clock.classList.remove('glitch-text');
-            dIdx = (dIdx + 1) % dates.length;
-            clock.innerText = typeof dates[dIdx] === 'function' ? dates[dIdx]() : dates[dIdx];
-        }, 400);
+        dIdx = (dIdx + 1) % dates.length;
+        clock.innerText = typeof dates[dIdx] === 'function' ? dates[dIdx]() : dates[dIdx];
     }, 5000);
     clock.innerText = dates[1]();
 
-    // --- GAME LOGIC (ORIGINAL REBORN) ---
-    const guestList = ["🌬️","🪸","🎛️","🚬","🩸","🛷","🐂","🔦","🗡️","🟩"];
-    const rows = 10, cols = 15;
-    let matrix = [], found = 0;
-    
+    // GAME LOGIC
+    const guests = [
+        {n:"Arya", i:"🌬️"}, {n:"Carlo Corallo", i:"🪸"}, {n:"Daykoda", i:"🎛️"}, 
+        {n:"Jack the smoker", i:"🚬"}, {n:"Mezzosangue", i:"🩸"}, {n:"Silent Bob", i:"🛷"}, 
+        {n:"Willie Peyote", i:"🐂"}, {n:"Il Danno", i:"🔦"}, {n:"Ghemon", i:"🗡️"}, {n:"Egreen", i:"🟩"}
+    ];
+    let found = 0;
+    const grid = document.getElementById('grid-container');
+    const matrix = [];
+
     function initGame() {
-        const grid = document.getElementById('grid-container');
-        grid.innerHTML = '';
-        matrix = [];
-        for(let r=0; r<rows; r++) {
+        for(let r=0; r<10; r++) {
             matrix[r] = [];
-            for(let c=0; c<cols; c++) matrix[r][c] = { guest: false, rev: false, n: 0, icon: "" };
+            for(let c=0; c<15; c++) matrix[r][c] = { g:null, rev:false, n:0 };
         }
-        let p = 0;
-        while(p < 10) {
-            let rr = Math.floor(Math.random()*rows), cc = Math.floor(Math.random()*cols);
-            if(!matrix[rr][cc].guest) {
-                matrix[rr][cc].guest = true;
-                matrix[rr][cc].icon = guestList[p];
-                p++;
-            }
-        }
-        for(let r=0; r<rows; r++) {
-            for(let c=0; c<cols; c++) {
-                if(!matrix[r][c].guest) {
-                    let count = 0;
-                    for(let i=-1; i<=1; i++) {
-                        for(let j=-1; j<=1; j++) {
-                            if(matrix[r+i] && matrix[r+i][c+j] && matrix[r+i][c+j].guest) count++;
-                        }
-                    }
-                    matrix[r][c].n = count;
-                }
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                cell.id = `c-${r}-${c}`;
-                cell.onclick = () => reveal(r, c);
-                grid.appendChild(cell);
-            }
-        }
-    }
-
-    function reveal(r, c) {
-        if(!matrix[r] || !matrix[r][c] || matrix[r][c].rev) return;
-        const data = matrix[r][c];
-        const el = document.getElementById(`c-${r}-${c}`);
-        data.rev = true;
-        el.classList.add('revealed');
-        if(data.guest) {
-            el.innerHTML = data.icon; el.classList.add('found');
-            found++;
-            const m = document.createElement('div');
-            m.className = 'guest-member'; m.innerHTML = data.icon;
-            document.getElementById('animation-zone').appendChild(m);
-            document.getElementById('mclovin').style.transform = "translateY(-10px)";
-            setTimeout(() => document.getElementById('mclovin').style.transform = "translateY(0)", 200);
-            if(found === 10) alert("CREW COMPLETA! CI VEDIAMO AL MAGNOLIA!");
-        } else {
-            if(data.n > 0) { el.innerHTML = data.n; el.classList.add('n'+data.n); }
-            else { 
-                for(let i=-1; i<=1; i++) {
-                    for(let j=-1; j<=1; j++) reveal(r+i, c+j);
-                }
-            }
-        }
-    }
-    initGame();
-
-    // --- WINDOW DRAG (MOUSE & TOUCH) ---
-    function openWin(id) { 
-        const w = document.getElementById(id);
-        w.style.display = 'flex';
-        w.style.zIndex = Math.floor(Date.now()/1000);
-    }
-    function closeWin(id) { document.getElementById(id).style.display = 'none'; }
-
-    document.querySelectorAll('.window').forEach(win => {
-        const tb = win.querySelector('.title-bar');
-        let dragging = false, ox, oy;
-        const start = (e) => {
-            dragging = true;
-            const clientX = e.clientX || e.touches[0].clientX;
-            const clientY = e.clientY || e.touches[0].clientY;
-            ox = clientX - win.offsetLeft; oy = clientY - win.offsetTop;
-            win.style.zIndex = 2000;
-        };
-        const move = (e) => {
-            if(!dragging) return;
-            const clientX = e.clientX || e.touches[0].clientX;
-            const clientY = e.clientY || e.touches[0].clientY;
-            win.style.left = (clientX - ox) + 'px';
-            win.style.top = (clientY - oy) + 'px';
-        };
-        tb.addEventListener('mousedown', start); tb.addEventListener('touchstart', start);
-        document.addEventListener('mousemove', move); document.addEventListener('touchmove', move);
-        document.addEventListener('mouseup', () => dragging = false); document.addEventListener('touchend', () => dragging = false);
-    });
-</script>
-</body>
-</html>
+        guests.forEach(g => {
+            let ok = false;
+            while(!ok) {
+                let r = Math.floor(Math.random()*10), c = Math.floor(Math.random()*15);
+                if(!matrix[r][c].g) { matrix[r][c].g = g; ok
