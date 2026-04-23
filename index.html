@@ -2,83 +2,83 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>STUDIO MURENA - OS 96</title>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background: #008080; 
             background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
             margin: 0; padding: 0;
             font-family: "Courier New", monospace;
-            height: 100vh; overflow: hidden;
-            display: flex; flex-direction: column;
+            height: 100vh; width: 100vw;
+            overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* DVD BOUNCING LOGO */
+        /* DVD BOUNCING LOGO - MIGLIORATO */
+        #dvd-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 40px);
+            pointer-events: none; z-index: 0;
+        }
         #dvd-logo {
-            position: absolute;
-            font-size: 28px;
-            font-weight: bold;
-            white-space: nowrap;
-            color: #00ff00;
-            text-shadow: 2px 2px #000;
-            z-index: 0; /* Dietro le finestre */
-            user-select: none;
-            pointer-events: none;
+            position: absolute; font-size: 24px; font-weight: bold;
+            color: #00ff00; text-shadow: 2px 2px #000; white-space: nowrap;
         }
 
         #desktop {
-            flex-grow: 1;
-            position: relative;
-            padding: 20px;
-            z-index: 1; /* Sopra il logo DVD per cliccare le icone */
+            flex-grow: 1; position: relative; padding: 15px; z-index: 1;
+            display: flex; flex-direction: column; align-content: flex-start; flex-wrap: wrap; gap: 15px;
         }
 
         .icon {
-            width: 80px; text-align: center; cursor: pointer; color: white;
-            text-shadow: 1px 1px #000; font-size: 11px; margin-bottom: 20px;
+            width: 75px; text-align: center; cursor: pointer; color: white;
+            text-shadow: 1px 1px #000; font-size: 10px;
         }
         .icon span { font-size: 30px; display: block; margin-bottom: 5px; }
 
-        /* WINDOW SYSTEM */
+        /* WINDOW SYSTEM RESPONSIVE */
         .window {
             position: absolute; background: #c0c0c0; border: 3px outset #fff;
             box-shadow: 5px 5px 0px rgba(0,0,0,0.5); display: none;
-            flex-direction: column; z-index: 10;
+            flex-direction: column; z-index: 10; max-width: 95vw;
         }
         .title-bar {
             background: linear-gradient(90deg, #000080, #1084d0); color: white;
             padding: 4px 10px; font-weight: bold; display: flex;
             justify-content: space-between; align-items: center; cursor: move;
         }
-        .window-content { padding: 15px; max-height: 450px; overflow-y: auto; color: #000; }
+        .window-content { padding: 10px; overflow-y: auto; color: #000; background: #c0c0c0; }
 
-        /* TASKBAR & GLITCH CLOCK */
+        /* SPECIFICO GIOCO DENTRO FINESTRA */
+        #game-canvas { background: #808080; padding: 5px; border: 2px inset #fff; }
+        .grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; }
+        .cell { 
+            width: 30px; height: 30px; background: #c0c0c0; border: 2px outset #fff; 
+            display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer;
+        }
+        @media (max-width: 600px) { .cell { width: 25px; height: 25px; } }
+        .cell.revealed { border: 1px solid #999; background: #bdbdbd; }
+
+        /* TASKBAR & CLOCK */
         #taskbar {
             height: 40px; background: #c0c0c0; border-top: 3px outset #fff;
             display: flex; align-items: center; padding: 2px; z-index: 9999;
         }
         .start-btn {
             background: #c0c0c0; border: 2px outset #fff;
-            padding: 2px 10px; font-weight: bold; cursor: pointer;
+            padding: 2px 8px; font-weight: bold; display: flex; align-items: center; gap: 5px;
         }
         #glitch-clock {
-            margin-left: auto; padding: 0 15px;
-            font-weight: bold; color: #000;
-            border-left: 2px inset #fff; height: 100%;
-            display: flex; align-items: center; min-width: 120px;
-            background: #bdbdbd;
+            margin-left: auto; padding: 0 10px; font-weight: bold;
+            border-left: 2px inset #fff; height: 100%; display: flex; align-items: center;
+            background: #bdbdbd; min-width: 100px; font-size: 12px;
         }
 
-        .glitch-anim { animation: glitch-effect 0.2s infinite; color: red; }
-        @keyframes glitch-effect {
-            0% { transform: translate(2px,0); }
-            50% { transform: translate(-2px,0); }
-            100% { transform: translate(0,0); }
-        }
+        .glitch-anim { animation: glitch 0.2s infinite; color: red; }
+        @keyframes glitch { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
 
-        button { background: #c0c0c0; border: 2px outset #fff; padding: 5px; cursor: pointer; }
+        button { background: #c0c0c0; border: 2px outset #fff; padding: 4px; cursor: pointer; font-family: inherit; }
         button:active { border-style: inset; }
     </style>
 </head>
@@ -88,99 +88,134 @@
     <source src="jazzhighlanders 8bit [2026-04-22 140712].wav" type="audio/wav">
 </audio>
 
-<div id="dvd-logo">STUDIOMURENA.NET</div>
+<div id="dvd-container"><div id="dvd-logo">STUDIOMURENA.NET</div></div>
 
 <div id="desktop">
-    <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO_MURENA.TXT</div>
-    <div class="icon" onclick="openWin('win-merch')"><span>👕</span>MERCH.EXE</div>
+    <div class="icon" onclick="openWin('win-game')"><span>🎮</span>MCLOVIN.EXE</div>
+    <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
     <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
-    <div class="icon" onclick="window.location.href='gioco.html'"><span>🎮</span>GIOCO.LNK</div>
 </div>
 
-<div id="win-bio" class="window" style="width: 400px; top: 50px; left: 50px;">
-    <div class="title-bar"><span>Bio.txt</span><button onclick="closeWin('win-bio')">X</button></div>
+<div id="win-game" class="window" style="width: 340px; top: 20px; left: 20px;">
+    <div class="title-bar"><span>McLovin Sweeper</span><button onclick="closeWin('win-game')">X</button></div>
     <div class="window-content">
-        <h3>Studio Murena</h3>
-        <p>Jazzcore dal futuro. 18.06.2026 @ Magnolia.</p>
+        <div id="game-status" style="margin-bottom:10px; font-size:10px; background:#000; color:#0f0; padding:5px;">Trova i Guest!</div>
+        <div id="game-canvas">
+            <div id="grid" class="grid"></div>
+        </div>
     </div>
 </div>
 
-<div id="win-spotify" class="window" style="width: 400px; top: 80px; left: 450px;">
+<div id="win-bio" class="window" style="width: 300px; top: 100px; left: 50px;">
+    <div class="title-bar"><span>Bio.txt</span><button onclick="closeWin('win-bio')">X</button></div>
+    <div class="window-content">
+        <p>STUDIO MURENA: Jazzcore dal 2018.</p>
+        <p>Live: 18/06/2026 Milano.</p>
+    </div>
+</div>
+
+<div id="win-spotify" class="window" style="width: 320px; top: 50px; right: 20px;">
     <div class="title-bar"><span>Player</span><button onclick="closeWin('win-spotify')">X</button></div>
     <div class="window-content">
-        <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px;">🎵 ATTIVA AUDIO 8-BIT</button>
-        <hr>
-        <p>Spotify Embed qui:</p>
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3BfQe4d6Y69H8M5C6X3L1q" width="100%" height="152" frameBorder="0" allow="autoplay; encrypted-media"></iframe>
+        <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px;">🎵 PLAY 8-BIT BASE</button>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3F7e7N2tXpYV7K8K8p6X6N" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
 </div>
 
 <div id="taskbar">
-    <div class="start-btn">Start</div>
+    <div class="start-btn"><img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16"> Start</div>
     <div id="glitch-clock">--/--/----</div>
 </div>
 
 <script>
-    // --- DVD LOGO LOGIC ---
+    // --- DVD BOUNCING LOGO PERFECT CORNERS ---
     const logo = document.getElementById('dvd-logo');
-    let x = 0, y = 0, dx = 2, dy = 2;
-    function moveLogo() {
-        const winW = window.innerWidth;
-        const winH = window.innerHeight - 40; // Taskbar
-        if (x + logo.offsetWidth >= winW || x <= 0) {
-            dx *= -1;
-            logo.style.color = '#' + Math.floor(Math.random()*16777215).toString(16);
-        }
-        if (y + logo.offsetHeight >= winH || y <= 0) {
-            dy *= -1;
-            logo.style.color = '#' + Math.floor(Math.random()*16777215).toString(16);
-        }
-        x += dx; y += dy;
-        logo.style.left = x + 'px';
-        logo.style.top = y + 'px';
-        requestAnimationFrame(moveLogo);
+    let posX = 0, posY = 0, velX = 1.5, velY = 1.5;
+    function bounce() {
+        const container = document.getElementById('dvd-container');
+        const maxW = container.clientWidth - logo.offsetWidth;
+        const maxH = container.clientHeight - logo.offsetHeight;
+        if (posX >= maxW || posX <= 0) { velX *= -1; changeColor(); }
+        if (posY >= maxH || posY <= 0) { velY *= -1; changeColor(); }
+        posX += velX; posY += velY;
+        logo.style.left = posX + 'px'; logo.style.top = posY + 'px';
+        requestAnimationFrame(bounce);
     }
-    moveLogo();
+    function changeColor() { logo.style.color = `hsl(${Math.random() * 360}, 100%, 50%)`; }
+    bounce();
 
-    // --- GLITCH CLOCK LOGIC ---
+    // --- GLITCH CLOCK ---
     const clock = document.getElementById('glitch-clock');
-    const dates = [
-        "04/08/1992",
-        () => new Date().toLocaleDateString('it-IT'),
-        "18/06/2026"
-    ];
-    let dateIdx = 0;
-
+    const dates = ["04/08/1992", () => new Date().toLocaleDateString('it-IT'), "18/06/2026"];
+    let dIdx = 0;
     setInterval(() => {
         clock.classList.add('glitch-anim');
         setTimeout(() => {
             clock.classList.remove('glitch-anim');
-            dateIdx = (dateIdx + 1) % dates.length;
-            const d = dates[dateIdx];
-            clock.innerText = typeof d === 'function' ? d() : d;
-        }, 300);
+            dIdx = (dIdx + 1) % dates.length;
+            clock.innerText = typeof dates[dIdx] === 'function' ? dates[dIdx]() : dates[dIdx];
+        }, 500);
     }, 5000);
-    clock.innerText = dates[1](); // Parte con data odierna
+    clock.innerText = dates[1]();
+
+    // --- MINI PRATO FIORITO LOGIC ---
+    const gridEl = document.getElementById('grid');
+    const guests = ["🌬️","🪸","🎛️","🚬","🩸","🛷","🐂","🔦","🗡️","🟩"];
+    function initGame() {
+        gridEl.innerHTML = '';
+        for(let i=0; i<100; i++) {
+            const c = document.createElement('div');
+            c.className = 'cell';
+            c.onclick = () => {
+                c.classList.add('revealed');
+                if(Math.random() > 0.9) {
+                    c.innerHTML = guests[Math.floor(Math.random()*guests.length)];
+                    document.getElementById('game-status').innerText = "GUEST TROVATO!";
+                } else {
+                    c.innerHTML = "0";
+                }
+            };
+            gridEl.appendChild(c);
+        }
+    }
+    initGame();
 
     // --- WINDOW MGMT ---
-    function openWin(id) { document.getElementById(id).style.display = 'flex'; }
+    function openWin(id) { 
+        const w = document.getElementById(id);
+        w.style.display = 'flex';
+        w.style.zIndex = Math.floor(Date.now()/1000);
+        if(window.innerWidth < 600) { w.style.left = '5px'; w.style.top = '5px'; }
+    }
     function closeWin(id) { document.getElementById(id).style.display = 'none'; }
 
-    // Trascinamento finestre
+    // Drag per mouse e touch
     const windows = document.querySelectorAll('.window');
     windows.forEach(win => {
         const tb = win.querySelector('.title-bar');
-        tb.onmousedown = (e) => {
-            let sx = e.clientX - win.offsetLeft;
-            let sy = e.clientY - win.offsetTop;
-            document.onmousemove = (e) => {
-                win.style.left = e.clientX - sx + 'px';
-                win.style.top = e.clientY - sy + 'px';
-            };
-            document.onmouseup = () => document.onmousemove = null;
+        let isDragging = false;
+        const move = (e) => {
+            if(!isDragging) return;
+            let clientX = e.clientX || e.touches[0].clientX;
+            let clientY = e.clientY || e.touches[0].clientY;
+            win.style.left = (clientX - offX) + 'px';
+            win.style.top = (clientY - offY) + 'px';
         };
+        const start = (e) => {
+            isDragging = true;
+            let clientX = e.clientX || e.touches[0].clientX;
+            let clientY = e.clientY || e.touches[0].clientY;
+            offX = clientX - win.offsetLeft;
+            offY = clientY - win.offsetTop;
+            win.style.zIndex = 1000;
+        };
+        tb.addEventListener('mousedown', start);
+        tb.addEventListener('touchstart', start);
+        document.addEventListener('mousemove', move);
+        document.addEventListener('touchmove', move);
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('touchend', () => isDragging = false);
     });
 </script>
-
 </body>
 </html>
