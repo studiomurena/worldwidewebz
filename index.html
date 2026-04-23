@@ -2,239 +2,89 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STUDIO MURENA - CRT OS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUDIO MURENA - OS</title>
     <style>
         :root { --monitor-color: #d9d9d9; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
+        * { box-sizing: border-box; }
         body { 
             background: #1a1a1a; margin: 0; padding: 0;
             display: flex; justify-content: center; align-items: center;
             height: 100vh; width: 100vw; overflow: hidden;
             font-family: "Courier New", monospace;
         }
-
-        /* CORNICE MONITOR */
+        /* MONITOR 4:3 */
         #monitor-bezel {
-            width: 98vw; max-width: 900px;
+            width: 95vw; max-width: 900px;
             aspect-ratio: 4 / 3;
             background: var(--monitor-color);
-            border-radius: 30px;
-            padding: 20px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 20px 50px rgba(0,0,0,0.8);
-            border: 8px solid #b0b0b0;
-            position: relative;
-            display: flex; justify-content: center; align-items: center;
+            border-radius: 30px; padding: 20px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 30px 60px rgba(0,0,0,0.8);
+            border: 10px solid #b0b0b0;
+            position: relative; display: flex; justify-content: center; align-items: center;
         }
-
         #screen {
             width: 100%; height: 100%;
-            background: #008080;
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            border: 15px solid #111;
+            background: #008080; position: relative; overflow: hidden;
+            border-radius: 10px; border: 15px solid #111;
             display: flex; flex-direction: column;
-            box-shadow: inset 0 0 30px #000;
         }
-
         #screen::after {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 9999;
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 99;
         }
-
+        /* LOGO CENTRALE */
         #center-logo {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: clamp(24px, 6vw, 45px); font-weight: bold;
-            z-index: 0; text-align: center; pointer-events: none;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: clamp(20px, 5vw, 40px); font-weight: bold;
+            text-align: center; pointer-events: none;
             animation: color-shift 2s infinite, glitch-txt 0.5s infinite;
-            text-shadow: 3px 3px 0px #000;
         }
-
         @keyframes color-shift { 0% { color: #0f0; } 33% { color: #f0f; } 66% { color: #0ff; } 100% { color: #0f0; } }
-        @keyframes glitch-txt { 0%, 100% { transform: translate(-50%, -50%) skew(0deg); } 10% { transform: translate(-51%, -49%) skew(2deg); } 20% { transform: translate(-49%, -51%) skew(-2deg); } }
+        @keyframes glitch-txt { 0% { transform: translate(-50%, -50%) skew(0deg); } 10% { transform: translate(-51%, -49%) skew(3deg); } 20% { transform: translate(-49%, -51%) skew(-3deg); } }
 
-        #desktop { flex-grow: 1; position: relative; padding: 15px; z-index: 1; display: flex; flex-direction: column; gap: 15px; }
-        .icon { width: 70px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; font-size: 11px; font-weight: bold; }
-        .icon span { font-size: 35px; display: block; margin-bottom: 5px; }
+        #desktop { flex-grow: 1; padding: 20px; display: flex; flex-direction: column; gap: 20px; z-index: 2; }
+        .icon { width: 80px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; text-decoration: none; }
+        .icon span { font-size: 40px; display: block; }
 
-        /* WINDOWS */
-        .window { position: absolute; background: #c0c0c0; border: 3px outset #fff; display: none; flex-direction: column; z-index: 10; width: 85%; max-width: 600px; box-shadow: 5px 5px 0px rgba(0,0,0,0.5); }
-        .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; cursor: move; }
-        .window-content { padding: 10px; overflow-y: auto; max-height: 55vh; color: #000; font-size: 12px; }
-
-        /* MOBILE FULLSCREEN GAME OVERRIDE */
-        @media (max-width: 600px) {
-            .window.fullscreen-mobile {
-                top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important;
-                max-width: none !important; z-index: 9000 !important; border: none;
-            }
-            .window.fullscreen-mobile .window-content { max-height: none; height: calc(100% - 30px); }
-            .cell { border-width: 1px !important; }
-        }
-
-        /* GAME STYLES */
-        #animation-zone { height: 70px; background: #222; margin-bottom: 5px; border: 3px inset #808080; display: flex; align-items: flex-end; padding: 5px; gap: 5px; overflow-x: auto; }
-        #mclovin { width: 40px; height: 40px; background: #f0d0b0; border: 2px solid #000; position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
-        #mclovin::before { content: "🕶️"; font-size: 14px; margin-top: 2px; }
-        #mclovin::after { content: "👕"; font-size: 22px; position: absolute; bottom: -4px; }
-        .guest-member { width: 30px; height: 30px; background: #fff; border: 1px solid #000; font-size: 16px; display:flex; align-items:center; justify-content:center; }
+        .window { position: absolute; background: #c0c0c0; border: 3px outset #fff; display: none; flex-direction: column; z-index: 10; width: 80%; box-shadow: 5px 5px 0px #000; }
+        .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .window-content { padding: 15px; color: #000; font-size: 14px; overflow-y: auto; max-height: 50vh; }
         
-        #grid-container { display: grid; grid-template-columns: repeat(15, 1fr); gap: 1px; background: #808080; border: 2px inset #fff; width: 100%; }
-        .cell { aspect-ratio: 1/1; background: #c0c0c0; border: 2px outset #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; cursor: pointer; }
-        .cell.revealed { border: 1px solid #999; background: #bdbdbd; }
-        .cell.found { background: #ff0 !important; border: 1px solid #000; }
-        .n1 { color: blue; } .n2 { color: green; } .n3 { color: red; }
-
-        /* TASKBAR */
-        #taskbar { height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
-        #glitch-clock { margin-left: auto; padding: 0 10px; font-weight: bold; border-left: 2px inset #fff; background: #bdbdbd; font-size: 11px; height: 100%; display: flex; align-items: center; }
-        
-        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-family: inherit; font-size: 11px; font-weight: bold; }
-        button:active { border-style: inset; }
+        #taskbar { height: 40px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 5px; z-index: 100; }
+        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
-
-<audio id="bg-music" loop><source src="jazzhighlanders 8bit [2026-04-22 140712].wav" type="audio/wav"></audio>
-
-<div id="monitor-bezel">
-    <div id="screen">
-        <div id="center-logo">STUDIOMURENA.NET</div>
-        <div id="desktop">
-            <div class="icon" onclick="openWin('win-game')"><span>🎮</span>GAME.EXE</div>
-            <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
-            <div class="icon" onclick="openWin('win-merch')"><span>👕</span>SHOP.URL</div>
-            <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
-        </div>
-
-        <div id="win-game" class="window fullscreen-mobile" style="top: 2%; left: 2%;">
-            <div class="title-bar"><span>McLovin_Sweeper.exe</span><button onclick="closeWin('win-game')">X ESCI</button></div>
-            <div class="window-content">
-                <div id="animation-zone"><div id="mclovin"></div></div>
-                <div id="status-game" style="font-size:10px; color:#000; font-weight:bold; background:#0f0; padding:4px; margin-bottom:5px; border:1px solid #000;">TROVA I GUEST!</div>
-                <div id="grid-container"></div>
-                <button onclick="initGame()" style="width:100%; margin-top:10px; padding:10px;">RESET GAME</button>
+    <div id="monitor-bezel">
+        <div id="screen">
+            <div id="center-logo">STUDIOMURENA.NET</div>
+            <div id="desktop">
+                <a href="game.html" class="icon"><span>🎮</span>GAME.EXE</a>
+                <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
+                <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
             </div>
-        </div>
 
-        <div id="win-bio" class="window" style="top: 15%; left: 10%;">
-            <div class="title-bar"><span>Bio_Murena.txt</span><button onclick="closeWin('win-bio')">X</button></div>
-            <div class="window-content">
-                <p>Dopo aver pubblicato il suo primo lavoro strumentale nell'estate del 2018, <b>Crunchy Bites</b>, il gruppo si è esibito a JazzMI, MusicalZOO e Jazz On The Road. Il gruppo inizialmente composto da un trio formatosi al Conservatorio di Milano, successivamente si amplia orientandosi verso sonorità rap con l'ingresso di Lorenzo Carminati alla voce.</p>
-                <p>Nel 2021 pubblicano l'album eponimo. Nel 2023 esce <b>WadiruM</b> (prod. Tommaso Colliva) e aprono i Red Hot Chili Peppers agli I-Days. Il 9 maggio 2025 pubblicano <b>Notturno</b>.</p>
+            <div id="win-bio" class="window" style="top:10%; left:10%;">
+                <div class="title-bar"><span>Bio.txt</span><button onclick="closeWin('win-bio')">X</button></div>
+                <div class="window-content">Studio Murena: Jazzcore/Hip-hop da Milano. WadiruM (2023), Notturno (2025).</div>
             </div>
-        </div>
 
-        <div id="win-merch" class="window" style="top: 25%; left: 15%;">
-            <div class="title-bar"><span>Shop.url</span><button onclick="closeWin('win-merch')">X</button></div>
-            <div class="window-content" style="text-align:center;"><a href="https://www.nancymerch.it/studio-murena/" target="_blank">VAI ALLO STORE UFFICIALE</a></div>
-        </div>
-
-        <div id="win-spotify" class="window" style="top: 10%; right: 5%; width:300px;">
-            <div class="title-bar"><span>Spotify</span><button onclick="closeWin('win-spotify')">X</button></div>
-            <div class="window-content">
-                <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px;">🎵 PLAY 8-BIT</button>
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3Bf9X9I8xXInD09C4yS7nJ?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <div id="win-spotify" class="window" style="top:20%; right:5%; width:300px;">
+                <div class="title-bar"><span>Player</span><button onclick="closeWin('win-spotify')">X</button></div>
+                <div class="window-content">
+                    <iframe src="https://open.spotify.com/embed/artist/3B3mNfUv0Yf20i28mGf7S6" width="100%" height="152" frameBorder="0" allow="encrypted-media"></iframe>
+                </div>
             </div>
-        </div>
 
-        <div id="taskbar">
-            <div style="background:#c0c0c0; border:2px outset #fff; padding:2px 8px; font-weight:bold; font-size:12px;">Start</div>
-            <div id="glitch-clock">--/--/----</div>
+            <div id="taskbar"><button>Start</button></div>
         </div>
     </div>
-</div>
-
-<script>
-    // CLOCK
-    const clock = document.getElementById('glitch-clock');
-    setInterval(() => { clock.innerText = new Date().toLocaleDateString('it-IT'); }, 1000);
-    clock.innerText = new Date().toLocaleDateString('it-IT');
-
-    // WINDOWS
-    let highestZ = 10;
-    function openWin(id) { 
-        const w = document.getElementById(id);
-        w.style.display = 'flex'; 
-        w.style.zIndex = ++highestZ;
-    }
-    function closeWin(id) { document.getElementById(id).style.display = 'none'; }
-
-    // DRAG (ONLY PC)
-    document.querySelectorAll('.window').forEach(win => {
-        const tb = win.querySelector('.title-bar');
-        let dragging = false, ox, oy;
-        tb.onmousedown = (e) => {
-            if(window.innerWidth < 600 && win.id === 'win-game') return; // No drag su mobile game
-            dragging = true; ox = e.clientX - win.offsetLeft; oy = e.clientY - win.offsetTop;
-            win.style.zIndex = ++highestZ;
-        };
-        document.onmousemove = (e) => { if(dragging) { win.style.left = (e.clientX - ox)+'px'; win.style.top = (e.clientY - oy)+'px'; } };
-        document.onmouseup = () => dragging = false;
-    });
-
-    // GAME
-    const guests = [{n:"Arya", i:"🌬️"}, {n:"Carlo Corallo", i:"🪸"}, {n:"Daykoda", i:"🎛️"}, {n:"Jack", i:"🚬"}, {n:"Mezzosangue", i:"🩸"}, {n:"Silent Bob", i:"🛷"}, {n:"Willie Peyote", i:"🐂"}, {n:"Danno", i:"🔦"}, {n:"Ghemon", i:"🗡️"}, {n:"Egreen", i:"🟩"}];
-    let found = 0;
-    const grid = document.getElementById('grid-container');
-    let matrix = [];
-
-    function initGame() {
-        grid.innerHTML = ''; found = 0;
-        document.getElementById('status-game').innerText = "TROVA I GUEST!";
-        document.getElementById('animation-zone').innerHTML = '<div id="mclovin"></div>';
-        for(let r=0; r<10; r++) {
-            matrix[r] = [];
-            for(let c=0; c<15; c++) matrix[r][c] = { g:null, rev:false, n:0 };
-        }
-        guests.forEach(g => {
-            let ok = false;
-            while(!ok) {
-                let r = Math.floor(Math.random()*10), c = Math.floor(Math.random()*15);
-                if(!matrix[r][c].g) { matrix[r][c].g = g; ok = true; }
-            }
-        });
-        for(let r=0; r<10; r++) {
-            for(let c=0; c<15; c++) {
-                if(!matrix[r][c].g) {
-                    let ct = 0;
-                    for(let i=-1; i<=1; i++) for(let j=-1; j<=1; j++)
-                        if(matrix[r+i] && matrix[r+i][c+j] && matrix[r+i][c+j].g) ct++;
-                    matrix[r][c].n = ct;
-                }
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                cell.onclick = () => reveal(r, c, cell);
-                grid.appendChild(cell);
-            }
-        }
-    }
-
-    function reveal(r, c, el) {
-        if(matrix[r][c].rev) return;
-        matrix[r][c].rev = true; el.classList.add('revealed');
-        if(matrix[r][c].g) {
-            el.innerHTML = matrix[r][c].g.i; el.classList.add('found');
-            document.getElementById('status-game').innerText = matrix[r][c].g.n.toUpperCase() + " SI È UNITO!";
-            const m = document.createElement('div'); m.className = 'guest-member'; m.innerHTML = matrix[r][c].g.i;
-            document.getElementById('animation-zone').appendChild(m);
-            if(++found === 10) alert("CREW COMPLETA!");
-        } else {
-            if(matrix[r][c].n > 0) { el.innerHTML = matrix[r][c].n; el.classList.add('n'+matrix[r][c].n); }
-            else {
-                for(let i=-1; i<=1; i++) for(let j=-1; j<=1; j++) {
-                    const next = grid.children[(r+i)*15 + (c+j)];
-                    if(next) reveal(r+i, c+j, next);
-                }
-            }
-        }
-    }
-    initGame();
-</script>
+    <script>
+        function openWin(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeWin(id) { document.getElementById(id).style.display = 'none'; }
+    </script>
 </body>
 </html>
