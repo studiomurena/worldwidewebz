@@ -86,8 +86,27 @@
         
         .guest-member { width: 35px; height: 35px; background: #fff; border: 1px solid #000; font-size: 18px; display:flex; align-items:center; justify-content:center; box-shadow: 2px 2px 0px #000; }
         
-        #grid-container { display: grid; grid-template-columns: repeat(15, 1fr); gap: 1px; background: #808080; border: 2px inset #fff; }
-        .cell { aspect-ratio: 1/1; background: #c0c0c0; border: 2px outset #fff; display: flex; align-items: center; justify-content: center; font-size: clamp(8px, 2vw, 14px); font-weight: bold; cursor: pointer; }
+        /* FIX GRIGLIA MOBILE */
+        #grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(15, minmax(0, 1fr)); /* Obbliga a scalare */
+            gap: 1px; 
+            background: #808080; 
+            border: 2px inset #fff; 
+            width: 100%;
+        }
+        .cell { 
+            aspect-ratio: 1/1; 
+            background: #c0c0c0; 
+            border: 2px outset #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: clamp(8px, 2.5vw, 14px); 
+            font-weight: bold; 
+            cursor: pointer; 
+            padding: 0;
+        }
         .cell.revealed { border: 1px solid #999; background: #bdbdbd; }
         .cell.found { background: #ffff00 !important; border: 1px solid #000; }
         
@@ -104,6 +123,8 @@
             #monitor-bezel { padding: 10px; border-radius: 15px; border-width: 4px; }
             #screen { border-width: 8px; }
             .window { width: 95%; left: 2.5% !important; }
+            /* Il bordo a 1px su mobile permette alle 15 caselle di non strabordare */
+            .cell { border-width: 1px; font-size: 9px; } 
         }
     </style>
 </head>
@@ -155,7 +176,7 @@
             <div class="title-bar"><span>Spotify_Player</span><button onclick="closeWin('win-spotify')">X</button></div>
             <div class="window-content">
                 <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px; padding:8px;">🎵 PLAY BASE 8-BIT</button>
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3B3PzM0j38s8vT44Z9f6Xv" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <iframe style="border-radius:12px" src="https://open.spotify.com/intl-it/artist/1rWbZmR5D63aZU60lMtVZx?si=ULBwjZdES-WuDFiGxaFmoQ" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
         </div>
 
@@ -228,7 +249,7 @@
         document.addEventListener('touchend', stopDrag);
     });
 
-    // GAME LOGIC FIXATA
+    // GAME LOGIC
     const guests = [
         {n:"Arya", i:"🌬️"}, {n:"Carlo Corallo", i:"🪸"}, {n:"Daykoda", i:"🎛️"}, 
         {n:"Jack the Smoker", i:"🚬"}, {n:"Mezzosangue", i:"🩸"}, {n:"Silent Bob", i:"🛷"}, 
