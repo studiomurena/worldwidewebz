@@ -6,43 +6,57 @@
     <title>MCLOVIN GAME</title>
     <style>
         body { background: #008080; margin: 0; font-family: "Courier New", monospace; color: white; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
+        #header { background: #c0c0c0; color: black; padding: 10px; border-bottom: 3px outset #fff; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        #back-btn { background: #c0c0c0; border: 2px outset #fff; padding: 5px 10px; cursor: pointer; text-decoration: none; color: black; font-weight: bold; font-size: 12px; }
         
-        #header { background: #c0c0c0; color: black; padding: 10px; border-bottom: 3px outset #fff; display: flex; justify-content: space-between; align-items: center; }
-        #back-btn { background: #c0c0c0; border: 2px outset #fff; padding: 5px 10px; cursor: pointer; text-decoration: none; color: black; font-weight: bold; }
+        #game-area { flex-grow: 1; display: flex; flex-direction: column; padding: 10px; align-items: center; justify-content: flex-start; overflow-y: auto; }
         
-        #game-area { flex-grow: 1; display: flex; flex-direction: column; padding: 10px; align-items: center; overflow-y: auto; }
-        
-        /* MCLOVIN ZONE */
-        #mclovin-box { width: 100%; max-width: 400px; height: 80px; background: #222; border: 3px inset #808080; margin-bottom: 10px; display: flex; align-items: flex-end; padding: 5px; gap: 5px; overflow-x: auto; }
-        #mclovin { width: 40px; height: 40px; background: #f0d0b0; border: 2px solid #000; position: relative; flex-shrink: 0; }
+        #mclovin-box { width: 100%; max-width: 450px; height: 75px; background: #222; border: 3px inset #808080; margin-bottom: 10px; display: flex; align-items: flex-end; padding: 5px; gap: 5px; overflow-x: auto; }
+        #mclovin { width: 40px; height: 40px; background: #f0d0b0; border: 2px solid #000; position: relative; flex-shrink: 0; box-shadow: 2px 2px 0 #000; }
         #mclovin::before { content: "🕶️"; font-size: 15px; position: absolute; top: 0; left: 5px; }
         #mclovin::after { content: "👕"; font-size: 25px; position: absolute; bottom: -5px; left: 2px; }
-        .guest { width: 30px; height: 30px; background: #fff; border: 1px solid #000; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        
+        .guest { width: 32px; height: 32px; background: #fff; border: 1px solid #000; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; animation: jump 0.4s ease; }
+        @keyframes jump { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
 
-        #status { width: 100%; max-width: 400px; background: #0f0; color: #000; font-weight: bold; text-align: center; padding: 5px; margin-bottom: 10px; border: 1px solid #000; }
+        #status { width: 100%; max-width: 450px; background: #0f0; color: #000; font-weight: bold; text-align: center; padding: 6px; margin-bottom: 10px; border: 2px solid #000; font-size: 11px; }
 
-        /* GRID */
         #grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 1px; background: #808080; border: 2px inset #fff; width: 100%; max-width: 500px; }
-        .cell { aspect-ratio: 1/1; background: #c0c0c0; border: 1.5px outset #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; cursor: pointer; color: black; }
+        .cell { aspect-ratio: 1/1; background: #c0c0c0; border: 2px outset #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; cursor: pointer; color: black; }
         .cell.rev { border: 1px solid #999; background: #bdbdbd; }
-        .cell.found { background: #ff0 !important; }
+        .cell.found { background: #ff0 !important; border: 1.5px solid #000; }
+        
+        .n1 { color: blue; } .n2 { color: green; } .n3 { color: red; }
     </style>
 </head>
 <body>
     <div id="header">
-        <span>McLovin_Sweeper.exe</span>
-        <a href="index.html" id="back-btn">← ESCI AL DESKTOP</a>
+        <span style="font-weight:bold">McLovin_Sweeper.exe</span>
+        <a href="index.html" id="back-btn">← DESKTOP</a>
     </div>
 
     <div id="game-area">
         <div id="mclovin-box"><div id="mclovin"></div></div>
-        <div id="status">TROVA I GUEST!</div>
+        <div id="status">TROVA I 10 GUEST NEL CAMPO!</div>
         <div id="grid"></div>
-        <button onclick="location.reload()" style="margin-top:15px; padding:10px;">RESTART</button>
+        <button onclick="location.reload()" style="margin-top:15px; padding:10px; font-family:inherit; font-weight:bold; background:#c0c0c0; border:2px outset #fff;">RESTART GAME</button>
     </div>
 
     <script>
-        const guests = [{n:"Arya", i:"🌬️"}, {n:"Carlo", i:"🪸"}, {n:"Daykoda", i:"🎛️"}, {n:"Jack", i:"🚬"}, {n:"Mezzo", i:"🩸"}, {n:"Bob", i:"🛷"}, {n:"Willie", i:"🐂"}, {n:"Danno", i:"🔦"}, {n:"Ghemon", i:"🗡️"}, {n:"Egreen", i:"🟩"}];
+        // Arya è flaggata come 'fem' per la grammatica
+        const guests = [
+            {n:"ARYA", i:"🌬️", fem:true}, 
+            {n:"CARLO CORALLO", i:"🪸"}, 
+            {n:"DAYKODA", i:"🎛️"}, 
+            {n:"JACK THE SMOKER", i:"🚬"}, 
+            {n:"MEZZOSANGUE", i:"🩸"}, 
+            {n:"SILENT BOB", i:"🛷"}, 
+            {n:"WILLIE PEYOTE", i:"🐂"}, 
+            {n:"DANNO", i:"🔦"}, 
+            {n:"GHEMON", i:"🗡️"}, 
+            {n:"EGREEN", i:"🟩"}
+        ];
+        
         let foundCount = 0;
         const grid = document.getElementById('grid');
         let matrix = [];
@@ -78,21 +92,35 @@
         function reveal(r, c, el) {
             if(matrix[r][c].rev) return;
             matrix[r][c].rev = true; el.classList.add('rev');
+            
             if(matrix[r][c].g) {
-                el.innerHTML = matrix[r][c].g.i; el.classList.add('found');
-                document.getElementById('status').innerText = matrix[r][c].g.n.toUpperCase() + " SI È UNITO ALLA CREW!";
-                const gDiv = document.createElement('div'); gDiv.className = 'guest'; gDiv.innerHTML = matrix[r][c].g.i;
+                const g = matrix[r][c].g;
+                el.innerHTML = g.i; el.classList.add('found');
+                
+                // Grammatica dinamica (unito/unita)
+                const participio = g.fem ? "UNITA" : "UNITO";
+                document.getElementById('status').innerText = `${g.n.toUpperCase()} SI È ${participio} ALLA CREW!`;
+                
+                const gDiv = document.createElement('div'); 
+                gDiv.className = 'guest'; 
+                gDiv.innerHTML = g.i;
                 document.getElementById('mclovin-box').appendChild(gDiv);
-                if(++foundCount === 10) document.getElementById('status').innerText = "CREW COMPLETA!";
-            } else if(matrix[r][c].n > 0) {
-                el.innerHTML = matrix[r][c].n;
+                
+                if(++foundCount === 10) {
+                    document.getElementById('status').innerText = "CREW AL COMPLETO! CI VEDIAMO AL CONCERTO!";
+                    document.getElementById('status').style.background = "#f0f";
+                    document.getElementById('status').style.color = "#fff";
+                }
             } else {
-                // Semplice espansione per celle vuote
-                for(let i=-1; i<=1; i++) for(let j=-1; j<=1; j++) {
-                    let nr = r+i, nc = c+j;
-                    if(nr>=0 && nr<10 && nc>=0 && nc<15) {
-                        const next = grid.children[nr*15 + nc];
-                        reveal(nr, nc, next);
+                if(matrix[r][c].n > 0) {
+                    el.innerHTML = matrix[r][c].n;
+                    el.classList.add('n' + matrix[r][c].n);
+                } else {
+                    for(let i=-1; i<=1; i++) for(let j=-1; j<=1; j++) {
+                        let nr = r+i, nc = c+j;
+                        if(nr>=0 && nr<10 && nc>=0 && nc<15) {
+                            reveal(nr, nc, grid.children[nr*15 + nc]);
+                        }
                     }
                 }
             }
