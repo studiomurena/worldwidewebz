@@ -13,12 +13,11 @@
             height: 100vh; width: 100vw; overflow: hidden;
             font-family: "Courier New", monospace;
         }
-        /* MONITOR 4:3 */
         #monitor-bezel {
             width: 95vw; max-width: 900px;
             aspect-ratio: 4 / 3;
             background: var(--monitor-color);
-            border-radius: 30px; padding: 20px;
+            border-radius: 30px; padding: 15px;
             box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 30px 60px rgba(0,0,0,0.8);
             border: 10px solid #b0b0b0;
             position: relative; display: flex; justify-content: center; align-items: center;
@@ -26,7 +25,7 @@
         #screen {
             width: 100%; height: 100%;
             background: #008080; position: relative; overflow: hidden;
-            border-radius: 10px; border: 15px solid #111;
+            border-radius: 10px; border: 12px solid #111;
             display: flex; flex-direction: column;
         }
         #screen::after {
@@ -35,26 +34,31 @@
                         linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
             background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 99;
         }
-        /* LOGO CENTRALE */
         #center-logo {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: clamp(20px, 5vw, 40px); font-weight: bold;
-            text-align: center; pointer-events: none;
-            animation: color-shift 2s infinite, glitch-txt 0.5s infinite;
+            font-size: clamp(18px, 4vw, 35px); font-weight: bold;
+            text-align: center; pointer-events: none; opacity: 0.8;
+            animation: color-shift 3s infinite, glitch-txt 0.5s infinite;
         }
         @keyframes color-shift { 0% { color: #0f0; } 33% { color: #f0f; } 66% { color: #0ff; } 100% { color: #0f0; } }
-        @keyframes glitch-txt { 0% { transform: translate(-50%, -50%) skew(0deg); } 10% { transform: translate(-51%, -49%) skew(3deg); } 20% { transform: translate(-49%, -51%) skew(-3deg); } }
+        @keyframes glitch-txt { 0% { transform: translate(-50%, -50%) skew(0deg); } 10% { transform: translate(-51%, -49%) skew(2deg); } 20% { transform: translate(-49%, -51%) skew(-2deg); } }
 
-        #desktop { flex-grow: 1; padding: 20px; display: flex; flex-direction: column; gap: 20px; z-index: 2; }
-        .icon { width: 80px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; text-decoration: none; }
-        .icon span { font-size: 40px; display: block; }
+        #desktop { 
+            flex-grow: 1; padding: 15px; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
+            grid-auto-rows: min-content;
+            gap: 15px; z-index: 2; 
+        }
+        .icon { width: 80px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; text-decoration: none; font-size: 11px; font-weight: bold; }
+        .icon span { font-size: 35px; display: block; margin-bottom: 5px; }
 
-        .window { position: absolute; background: #c0c0c0; border: 3px outset #fff; display: none; flex-direction: column; z-index: 10; width: 80%; box-shadow: 5px 5px 0px #000; }
-        .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .window-content { padding: 15px; color: #000; font-size: 14px; overflow-y: auto; max-height: 50vh; }
+        .window { position: absolute; background: #c0c0c0; border: 3px outset #fff; display: none; flex-direction: column; z-index: 10; width: 85%; box-shadow: 5px 5px 0px #000; }
+        .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .window-content { padding: 12px; color: #000; font-size: 13px; overflow-y: auto; max-height: 45vh; }
         
-        #taskbar { height: 40px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 5px; z-index: 100; }
-        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-weight: bold; }
+        #taskbar { height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 5px; z-index: 100; font-size: 12px; }
+        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-weight: bold; font-family: inherit; }
     </style>
 </head>
 <body>
@@ -64,26 +68,38 @@
             <div id="desktop">
                 <a href="game.html" class="icon"><span>🎮</span>GAME.EXE</a>
                 <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
+                <a href="https://www.nancymerch.it/studio-murena/" target="_blank" class="icon"><span>👕</span>SHOP.URL</a>
+                <a href="https://link.dice.fm/k2fa8c1a2c43?dice_id=k2fa8c1a2c43" target="_blank" class="icon"><span>🎟️</span>TICKETS.EXE</a>
                 <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
             </div>
 
-            <div id="win-bio" class="window" style="top:10%; left:10%;">
+            <div id="win-bio" class="window" style="top:10%; left:5%;">
                 <div class="title-bar"><span>Bio.txt</span><button onclick="closeWin('win-bio')">X</button></div>
-                <div class="window-content">Studio Murena: Jazzcore/Hip-hop da Milano. WadiruM (2023), Notturno (2025).</div>
-            </div>
-
-            <div id="win-spotify" class="window" style="top:20%; right:5%; width:300px;">
-                <div class="title-bar"><span>Player</span><button onclick="closeWin('win-spotify')">X</button></div>
                 <div class="window-content">
-                    <iframe src="https://open.spotify.com/embed/artist/3B3mNfUv0Yf20i28mGf7S6" width="100%" height="152" frameBorder="0" allow="encrypted-media"></iframe>
+                    <b>Studio Murena</b>: Il sestetto milanese che fonde jazzcore e hip-hop. <br><br>
+                    Dopo l'esordio strumentale e l'album omonimo del 2021, hanno conquistato i palchi di Mi Ami e Locus, collaborando con Dardust e aprendo per Red Hot Chili Peppers e Primal Scream. <br><br>
+                    Nel 2023 esce <i>WadiruM</i>. Il 9 maggio 2025 pubblicano <i>Notturno</i>.
                 </div>
             </div>
 
-            <div id="taskbar"><button>Start</button></div>
+            <div id="win-spotify" class="window" style="top:15%; right:5%; width:280px;">
+                <div class="title-bar"><span>Spotify_Player</span><button onclick="closeWin('win-spotify')">X</button></div>
+                <div class="window-content" style="padding:5px;">
+                    <iframe style="border-radius:8px" src="https://open.spotify.com/embed/artist/3B3mNfUv0Yf20i28mGf7S6" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div id="taskbar"><button style="padding: 2px 10px;">Start</button></div>
         </div>
     </div>
     <script>
-        function openWin(id) { document.getElementById(id).style.display = 'flex'; }
+        function openWin(id) { 
+            const wins = document.querySelectorAll('.window');
+            wins.forEach(w => w.style.zIndex = 10);
+            const target = document.getElementById(id);
+            target.style.display = 'flex'; 
+            target.style.zIndex = 20;
+        }
         function closeWin(id) { document.getElementById(id).style.display = 'none'; }
     </script>
 </body>
