@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>STUDIO MURENA - OS 96</title>
+    <style>
+        * { box-sizing: border-box; }
+        
+        body { 
+            background: #008080; /* Il classico verde acqua di Windows 95 */
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+            margin: 0;
+            padding: 0;
+            font-family: "Courier New", monospace;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* DESKTOP ICONS */
+        #desktop {
+            flex-grow: 1;
+            position: relative;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 80px);
+            grid-template-rows: repeat(auto-fill, 90px);
+            grid-auto-flow: column;
+            gap: 20px;
+        }
+
+        .icon {
+            width: 70px;
+            text-align: center;
+            cursor: pointer;
+            color: white;
+            text-shadow: 1px 1px #000;
+            font-size: 12px;
+        }
+
+        .icon img { width: 40px; height: 40px; display: block; margin: 0 auto 5px; }
+
+        /* WINDOW SYSTEM */
+        .window {
+            position: absolute;
+            background: #c0c0c0;
+            border: 3px outset #fff;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
+            display: none; /* Chiuse di default */
+            flex-direction: column;
+            min-width: 300px;
+        }
+
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 4px 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+        }
+
+        .window-content {
+            padding: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            color: #000;
+        }
+
+        /* SEZIONI SPECIFICHE */
+        .merch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .merch-item { border: 2px inset #fff; padding: 5px; text-align: center; background: #bdbdbd; }
+        
+        .bio-section { border-left: 4px solid #000080; padding-left: 10px; margin-bottom: 20px; }
+
+        /* TASKBAR */
+        #taskbar {
+            height: 40px;
+            background: #c0c0c0;
+            border-top: 3px outset #fff;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+            z-index: 9999;
+        }
+
+        .start-btn {
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            padding: 2px 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        /* BOTTONI WIN95 */
+        button {
+            background: #c0c0c0; border: 2px outset #fff;
+            padding: 5px 15px; cursor: pointer; font-family: inherit; font-weight: bold;
+        }
+        button:active { border-style: inset; }
+
+    </style>
+</head>
+<body>
+
+<div id="desktop">
+    <div class="icon" onclick="openWin('win-bio')">
+        <span>👤</span><br>BIO_MURENA.TXT
+    </div>
+    <div class="icon" onclick="openWin('win-guests')">
+        <span>👥</span><br>GUESTS.LOG
+    </div>
+    <div class="icon" onclick="openWin('win-merch')">
+        <span>👕</span><br>MERCH_STORE.EXE
+    </div>
+    <div class="icon" onclick="openWin('win-spotify')">
+        <span>📻</span><br>PLAYER.WAV
+    </div>
+    <div class="icon" onclick="window.location.href='gioco.html'">
+        <span>🎮</span><br>GIOCO_MCLOVIN.LNK
+    </div>
+</div>
+
+<div id="win-bio" class="window" style="width: 450px; top: 50px; left: 100px;">
+    <div class="title-bar"><span>Bio_Studio_Murena.txt</span><button onclick="closeWin('win-bio')">X</button></div>
+    <div class="window-content">
+        <h3>Studio Murena</h3>
+        <p>Il sestetto milanese che ha rotto i confini tra jazzcore, rap e sperimentazione. Nati nel 2018, hanno trasformato il cemento in musica.</p>
+        <p><i>"Non è solo jazz, non è solo hip hop. È Murena."</i></p>
+    </div>
+</div>
+
+<div id="win-merch" class="window" style="width: 500px; top: 150px; left: 300px;">
+    <div class="title-bar"><span>Merch_Store.exe</span><button onclick="closeWin('win-merch')">X</button></div>
+    <div class="window-content">
+        <div class="merch-grid">
+            <div class="merch-item">
+                <div style="height:100px; background:#888; margin-bottom:5px;">[FOTO T-SHIRT]</div>
+                <b>MURENA TEE 2026</b><br>€25.00<br>
+                <button>BUY NOW</button>
+            </div>
+            <div class="merch-item">
+                <div style="height:100px; background:#888; margin-bottom:5px;">[FOTO VINILE]</div>
+                <b>VINYL SPECIAL ED.</b><br>€35.00<br>
+                <button>BUY NOW</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="win-spotify" class="window" style="width: 400px; top: 100px; left: 450px;">
+    <div class="title-bar"><span>Murena_Media_Player</span><button onclick="closeWin('win-spotify')">X</button></div>
+    <div class="window-content">
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3B3nU3N12vD8fA9Zsh2y2o?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+</div>
+
+<div id="win-guests" class="window" style="width: 400px; top: 80px; left: 150px;">
+    <div class="title-bar"><span>Guests_Database.db</span><button onclick="closeWin('win-guests')">X</button></div>
+    <div class="window-content">
+        <div class="bio-section"><b>Il Danno:</b> Leggenda del rap romano (Colle der Fomento).</div>
+        <div class="bio-section"><b>Willie Peyote:</b> Il nichilista illuminato di Torino.</div>
+        <div class="bio-section"><b>Mezzosangue:</b> La voce sotto la maschera.</div>
+        <p>...e molti altri glitch nel sistema.</p>
+    </div>
+</div>
+
+<div id="taskbar">
+    <div class="start-btn">
+        <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
+        Start
+    </div>
+    <div style="margin-left: auto; padding-right: 10px; font-size: 14px; border-left: 2px inset #fff; padding-left: 10px;">
+        18/06/2026
+    </div>
+</div>
+
+<script>
+    function openWin(id) {
+        document.getElementById(id).style.display = 'flex';
+        document.getElementById(id).style.zIndex = Math.floor(Date.now() / 1000);
+    }
+
+    function closeWin(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    // Rendere le finestre trascinabili (base)
+    const windows = document.querySelectorAll('.window');
+    windows.forEach(win => {
+        const titleBar = win.querySelector('.title-bar');
+        titleBar.onmousedown = function(event) {
+            let shiftX = event.clientX - win.getBoundingClientRect().left;
+            let shiftY = event.clientY - win.getBoundingClientRect().top;
+            win.style.zIndex = 1000;
+
+            function moveAt(pageX, pageY) {
+                win.style.left = pageX - shiftX + 'px';
+                win.style.top = pageY - shiftY + 'px';
+            }
+
+            function onMouseMove(event) { moveAt(event.pageX, event.pageY); }
+            document.addEventListener('mousemove', onMouseMove);
+            win.onmouseup = function() {
+                document.removeEventListener('mousemove', onMouseMove);
+                win.onmouseup = null;
+            };
+        };
+    });
+</script>
+
+</body>
+</html>
