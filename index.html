@@ -7,210 +7,177 @@
         * { box-sizing: border-box; }
         
         body { 
-            background: #008080; /* Il classico verde acqua di Windows 95 */
+            background: #008080; 
             background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: "Courier New", monospace;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
-        /* DESKTOP ICONS */
+        /* DVD BOUNCING LOGO */
+        #dvd-logo {
+            position: absolute;
+            font-size: 28px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #00ff00;
+            text-shadow: 2px 2px #000;
+            z-index: 0; /* Dietro le finestre */
+            user-select: none;
+            pointer-events: none;
+        }
+
         #desktop {
             flex-grow: 1;
             position: relative;
             padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 80px);
-            grid-template-rows: repeat(auto-fill, 90px);
-            grid-auto-flow: column;
-            gap: 20px;
+            z-index: 1; /* Sopra il logo DVD per cliccare le icone */
         }
 
         .icon {
-            width: 70px;
-            text-align: center;
-            cursor: pointer;
-            color: white;
-            text-shadow: 1px 1px #000;
-            font-size: 12px;
+            width: 80px; text-align: center; cursor: pointer; color: white;
+            text-shadow: 1px 1px #000; font-size: 11px; margin-bottom: 20px;
         }
-
-        .icon img { width: 40px; height: 40px; display: block; margin: 0 auto 5px; }
+        .icon span { font-size: 30px; display: block; margin-bottom: 5px; }
 
         /* WINDOW SYSTEM */
         .window {
-            position: absolute;
-            background: #c0c0c0;
-            border: 3px outset #fff;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.5);
-            display: none; /* Chiuse di default */
-            flex-direction: column;
-            min-width: 300px;
+            position: absolute; background: #c0c0c0; border: 3px outset #fff;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.5); display: none;
+            flex-direction: column; z-index: 10;
         }
-
         .title-bar {
-            background: linear-gradient(90deg, #000080, #1084d0);
-            color: white;
-            padding: 4px 10px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: move;
+            background: linear-gradient(90deg, #000080, #1084d0); color: white;
+            padding: 4px 10px; font-weight: bold; display: flex;
+            justify-content: space-between; align-items: center; cursor: move;
         }
+        .window-content { padding: 15px; max-height: 450px; overflow-y: auto; color: #000; }
 
-        .window-content {
-            padding: 15px;
-            max-height: 500px;
-            overflow-y: auto;
-            color: #000;
-        }
-
-        /* SEZIONI SPECIFICHE */
-        .merch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .merch-item { border: 2px inset #fff; padding: 5px; text-align: center; background: #bdbdbd; }
-        
-        .bio-section { border-left: 4px solid #000080; padding-left: 10px; margin-bottom: 20px; }
-
-        /* TASKBAR */
+        /* TASKBAR & GLITCH CLOCK */
         #taskbar {
-            height: 40px;
-            background: #c0c0c0;
-            border-top: 3px outset #fff;
-            display: flex;
-            align-items: center;
-            padding: 2px;
-            z-index: 9999;
+            height: 40px; background: #c0c0c0; border-top: 3px outset #fff;
+            display: flex; align-items: center; padding: 2px; z-index: 9999;
         }
-
         .start-btn {
-            background: #c0c0c0;
-            border: 2px outset #fff;
-            padding: 2px 10px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-
-        /* BOTTONI WIN95 */
-        button {
             background: #c0c0c0; border: 2px outset #fff;
-            padding: 5px 15px; cursor: pointer; font-family: inherit; font-weight: bold;
+            padding: 2px 10px; font-weight: bold; cursor: pointer;
         }
-        button:active { border-style: inset; }
+        #glitch-clock {
+            margin-left: auto; padding: 0 15px;
+            font-weight: bold; color: #000;
+            border-left: 2px inset #fff; height: 100%;
+            display: flex; align-items: center; min-width: 120px;
+            background: #bdbdbd;
+        }
 
+        .glitch-anim { animation: glitch-effect 0.2s infinite; color: red; }
+        @keyframes glitch-effect {
+            0% { transform: translate(2px,0); }
+            50% { transform: translate(-2px,0); }
+            100% { transform: translate(0,0); }
+        }
+
+        button { background: #c0c0c0; border: 2px outset #fff; padding: 5px; cursor: pointer; }
+        button:active { border-style: inset; }
     </style>
 </head>
 <body>
 
+<audio id="bg-music" loop>
+    <source src="jazzhighlanders 8bit [2026-04-22 140712].wav" type="audio/wav">
+</audio>
+
+<div id="dvd-logo">STUDIOMURENA.NET</div>
+
 <div id="desktop">
-    <div class="icon" onclick="openWin('win-bio')">
-        <span>👤</span><br>BIO_MURENA.TXT
-    </div>
-    <div class="icon" onclick="openWin('win-guests')">
-        <span>👥</span><br>GUESTS.LOG
-    </div>
-    <div class="icon" onclick="openWin('win-merch')">
-        <span>👕</span><br>MERCH_STORE.EXE
-    </div>
-    <div class="icon" onclick="openWin('win-spotify')">
-        <span>📻</span><br>PLAYER.WAV
-    </div>
-    <div class="icon" onclick="window.location.href='gioco.html'">
-        <span>🎮</span><br>GIOCO_MCLOVIN.LNK
-    </div>
+    <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO_MURENA.TXT</div>
+    <div class="icon" onclick="openWin('win-merch')"><span>👕</span>MERCH.EXE</div>
+    <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
+    <div class="icon" onclick="window.location.href='gioco.html'"><span>🎮</span>GIOCO.LNK</div>
 </div>
 
-<div id="win-bio" class="window" style="width: 450px; top: 50px; left: 100px;">
-    <div class="title-bar"><span>Bio_Studio_Murena.txt</span><button onclick="closeWin('win-bio')">X</button></div>
+<div id="win-bio" class="window" style="width: 400px; top: 50px; left: 50px;">
+    <div class="title-bar"><span>Bio.txt</span><button onclick="closeWin('win-bio')">X</button></div>
     <div class="window-content">
         <h3>Studio Murena</h3>
-        <p>Il sestetto milanese che ha rotto i confini tra jazzcore, rap e sperimentazione. Nati nel 2018, hanno trasformato il cemento in musica.</p>
-        <p><i>"Non è solo jazz, non è solo hip hop. È Murena."</i></p>
+        <p>Jazzcore dal futuro. 18.06.2026 @ Magnolia.</p>
     </div>
 </div>
 
-<div id="win-merch" class="window" style="width: 500px; top: 150px; left: 300px;">
-    <div class="title-bar"><span>Merch_Store.exe</span><button onclick="closeWin('win-merch')">X</button></div>
+<div id="win-spotify" class="window" style="width: 400px; top: 80px; left: 450px;">
+    <div class="title-bar"><span>Player</span><button onclick="closeWin('win-spotify')">X</button></div>
     <div class="window-content">
-        <div class="merch-grid">
-            <div class="merch-item">
-                <div style="height:100px; background:#888; margin-bottom:5px;">[FOTO T-SHIRT]</div>
-                <b>MURENA TEE 2026</b><br>€25.00<br>
-                <button>BUY NOW</button>
-            </div>
-            <div class="merch-item">
-                <div style="height:100px; background:#888; margin-bottom:5px;">[FOTO VINILE]</div>
-                <b>VINYL SPECIAL ED.</b><br>€35.00<br>
-                <button>BUY NOW</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="win-spotify" class="window" style="width: 400px; top: 100px; left: 450px;">
-    <div class="title-bar"><span>Murena_Media_Player</span><button onclick="closeWin('win-spotify')">X</button></div>
-    <div class="window-content">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3B3nU3N12vD8fA9Zsh2y2o?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-    </div>
-</div>
-
-<div id="win-guests" class="window" style="width: 400px; top: 80px; left: 150px;">
-    <div class="title-bar"><span>Guests_Database.db</span><button onclick="closeWin('win-guests')">X</button></div>
-    <div class="window-content">
-        <div class="bio-section"><b>Il Danno:</b> Leggenda del rap romano (Colle der Fomento).</div>
-        <div class="bio-section"><b>Willie Peyote:</b> Il nichilista illuminato di Torino.</div>
-        <div class="bio-section"><b>Mezzosangue:</b> La voce sotto la maschera.</div>
-        <p>...e molti altri glitch nel sistema.</p>
+        <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px;">🎵 ATTIVA AUDIO 8-BIT</button>
+        <hr>
+        <p>Spotify Embed qui:</p>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3BfQe4d6Y69H8M5C6X3L1q" width="100%" height="152" frameBorder="0" allow="autoplay; encrypted-media"></iframe>
     </div>
 </div>
 
 <div id="taskbar">
-    <div class="start-btn">
-        <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16">
-        Start
-    </div>
-    <div style="margin-left: auto; padding-right: 10px; font-size: 14px; border-left: 2px inset #fff; padding-left: 10px;">
-        18/06/2026
-    </div>
+    <div class="start-btn">Start</div>
+    <div id="glitch-clock">--/--/----</div>
 </div>
 
 <script>
-    function openWin(id) {
-        document.getElementById(id).style.display = 'flex';
-        document.getElementById(id).style.zIndex = Math.floor(Date.now() / 1000);
+    // --- DVD LOGO LOGIC ---
+    const logo = document.getElementById('dvd-logo');
+    let x = 0, y = 0, dx = 2, dy = 2;
+    function moveLogo() {
+        const winW = window.innerWidth;
+        const winH = window.innerHeight - 40; // Taskbar
+        if (x + logo.offsetWidth >= winW || x <= 0) {
+            dx *= -1;
+            logo.style.color = '#' + Math.floor(Math.random()*16777215).toString(16);
+        }
+        if (y + logo.offsetHeight >= winH || y <= 0) {
+            dy *= -1;
+            logo.style.color = '#' + Math.floor(Math.random()*16777215).toString(16);
+        }
+        x += dx; y += dy;
+        logo.style.left = x + 'px';
+        logo.style.top = y + 'px';
+        requestAnimationFrame(moveLogo);
     }
+    moveLogo();
 
-    function closeWin(id) {
-        document.getElementById(id).style.display = 'none';
-    }
+    // --- GLITCH CLOCK LOGIC ---
+    const clock = document.getElementById('glitch-clock');
+    const dates = [
+        "04/08/1992",
+        () => new Date().toLocaleDateString('it-IT'),
+        "18/06/2026"
+    ];
+    let dateIdx = 0;
 
-    // Rendere le finestre trascinabili (base)
+    setInterval(() => {
+        clock.classList.add('glitch-anim');
+        setTimeout(() => {
+            clock.classList.remove('glitch-anim');
+            dateIdx = (dateIdx + 1) % dates.length;
+            const d = dates[dateIdx];
+            clock.innerText = typeof d === 'function' ? d() : d;
+        }, 300);
+    }, 5000);
+    clock.innerText = dates[1](); // Parte con data odierna
+
+    // --- WINDOW MGMT ---
+    function openWin(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeWin(id) { document.getElementById(id).style.display = 'none'; }
+
+    // Trascinamento finestre
     const windows = document.querySelectorAll('.window');
     windows.forEach(win => {
-        const titleBar = win.querySelector('.title-bar');
-        titleBar.onmousedown = function(event) {
-            let shiftX = event.clientX - win.getBoundingClientRect().left;
-            let shiftY = event.clientY - win.getBoundingClientRect().top;
-            win.style.zIndex = 1000;
-
-            function moveAt(pageX, pageY) {
-                win.style.left = pageX - shiftX + 'px';
-                win.style.top = pageY - shiftY + 'px';
-            }
-
-            function onMouseMove(event) { moveAt(event.pageX, event.pageY); }
-            document.addEventListener('mousemove', onMouseMove);
-            win.onmouseup = function() {
-                document.removeEventListener('mousemove', onMouseMove);
-                win.onmouseup = null;
+        const tb = win.querySelector('.title-bar');
+        tb.onmousedown = (e) => {
+            let sx = e.clientX - win.offsetLeft;
+            let sy = e.clientY - win.offsetTop;
+            document.onmousemove = (e) => {
+                win.style.left = e.clientX - sx + 'px';
+                win.style.top = e.clientY - sy + 'px';
             };
+            document.onmouseup = () => document.onmousemove = null;
         };
     });
 </script>
