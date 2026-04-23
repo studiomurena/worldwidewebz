@@ -57,8 +57,14 @@
         .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
         .window-content { padding: 12px; color: #000; font-size: 13px; overflow-y: auto; max-height: 45vh; }
         
-        #taskbar { height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 5px; z-index: 100; font-size: 12px; }
-        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-weight: bold; font-family: inherit; }
+        #taskbar { height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 2px 5px; z-index: 100; }
+        #glitch-clock { 
+            margin-left: auto; padding: 0 10px; font-weight: bold; 
+            border-left: 2px inset #fff; background: #bdbdbd; 
+            font-size: 11px; height: 100%; display: flex; align-items: center; color: #000;
+        }
+        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-weight: bold; font-family: inherit; font-size: 12px; padding: 2px 8px; }
+        button:active { border-style: inset; }
     </style>
 </head>
 <body>
@@ -77,8 +83,7 @@
                 <div class="title-bar"><span>Bio.txt</span><button onclick="closeWin('win-bio')">X</button></div>
                 <div class="window-content">
                     <b>Studio Murena</b>: Il sestetto milanese che fonde jazzcore e hip-hop. <br><br>
-                    Dopo l'esordio strumentale e l'album omonimo del 2021, hanno conquistato i palchi di Mi Ami e Locus, collaborando con Dardust e aprendo per Red Hot Chili Peppers e Primal Scream. <br><br>
-                    Nel 2023 esce <i>WadiruM</i>. Il 9 maggio 2025 pubblicano <i>Notturno</i>.
+                    Dopo <i>WadiruM</i> (2023), il 9 maggio 2025 pubblicano l'album <i>Notturno</i>.
                 </div>
             </div>
 
@@ -89,7 +94,10 @@
                 </div>
             </div>
 
-            <div id="taskbar"><button style="padding: 2px 10px;">Start</button></div>
+            <div id="taskbar">
+                <button>Start</button>
+                <div id="glitch-clock">--/--/----</div>
+            </div>
         </div>
     </div>
     <script>
@@ -101,6 +109,21 @@
             target.style.zIndex = 20;
         }
         function closeWin(id) { document.getElementById(id).style.display = 'none'; }
+
+        // LOGICA GLITCH CLOCK
+        const clockEl = document.getElementById('glitch-clock');
+        const dates = [
+            () => new Date().toLocaleDateString('it-IT'), // Real Time
+            "01/01/1983",                                 // Inaugurazione Internet
+            "18/06/2026"                                  // Futuro
+        ];
+        let dateIdx = 0;
+        setInterval(() => {
+            dateIdx = (dateIdx + 1) % dates.length;
+            const currentVal = dates[dateIdx];
+            clockEl.innerText = typeof currentVal === 'function' ? currentVal() : currentVal;
+        }, 4000); // Cambia ogni 4 secondi
+        clockEl.innerText = dates[0]();
     </script>
 </body>
 </html>
