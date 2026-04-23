@@ -2,11 +2,11 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>STUDIO MURENA - CRT OS</title>
     <style>
-        :root { --monitor-color: #333; }
-        * { box-sizing: border-box; }
+        :root { --monitor-color: #d9d9d9; } /* Colore plastica monitor PC */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             background: #1a1a1a; margin: 0; padding: 0;
@@ -17,13 +17,13 @@
 
         /* CORNICE MONITOR HARDWARE */
         #monitor-bezel {
-            width: 95vw; max-width: 900px;
+            width: 98vw; max-width: 900px;
             aspect-ratio: 4 / 3;
             background: var(--monitor-color);
-            border-radius: 40px;
-            padding: 30px;
-            box-shadow: inset 0 0 50px #000, 0 50px 100px rgba(0,0,0,0.5);
-            border: 10px solid #222;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 20px 50px rgba(0,0,0,0.8);
+            border: 8px solid #b0b0b0;
             position: relative;
             display: flex; justify-content: center; align-items: center;
         }
@@ -34,10 +34,10 @@
             background: #008080;
             position: relative;
             overflow: hidden;
-            border-radius: 10px;
+            border-radius: 15px;
             border: 15px solid #111;
             display: flex; flex-direction: column;
-            box-shadow: inset 0 0 20px #000;
+            box-shadow: inset 0 0 30px #000;
         }
 
         /* EFFETTO SCANLINES */
@@ -45,16 +45,17 @@
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 100;
+            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 9999;
         }
 
         /* LOGO CENTRALE GLITCH */
         #center-logo {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            font-size: clamp(20px, 5vw, 40px); font-weight: bold;
+            font-size: clamp(24px, 6vw, 45px); font-weight: bold;
             z-index: 0; text-align: center; pointer-events: none;
             animation: color-shift 2s infinite, glitch-txt 0.5s infinite;
+            text-shadow: 3px 3px 0px #000;
         }
 
         @keyframes color-shift {
@@ -62,42 +63,47 @@
         }
         @keyframes glitch-txt {
             0% { transform: translate(-50%, -50%) skew(0deg); opacity: 1; }
-            10% { transform: translate(-51%, -49%) skew(5deg); opacity: 0.8; }
-            20% { transform: translate(-49%, -51%) skew(-5deg); opacity: 1; }
+            10% { transform: translate(-51%, -49%) skew(2deg); opacity: 0.8; }
+            20% { transform: translate(-49%, -51%) skew(-2deg); opacity: 1; }
             100% { transform: translate(-50%, -50%) skew(0deg); }
         }
 
         #desktop { flex-grow: 1; position: relative; padding: 15px; z-index: 1; display: flex; flex-direction: column; gap: 15px; }
-        .icon { width: 70px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; font-size: 9px; }
-        .icon span { font-size: 30px; display: block; }
+        .icon { width: 70px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; font-size: 11px; font-weight: bold; }
+        .icon span { font-size: 35px; display: block; margin-bottom: 5px; }
 
         /* WINDOWS */
-        .window { position: absolute; background: #c0c0c0; border: 3px outset #fff; display: none; flex-direction: column; z-index: 10; width: 85%; }
-        .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-        .window-content { padding: 10px; overflow-y: auto; max-height: 50vh; color: #000; font-size: 12px; }
+        .window { position: absolute; background: #c0c0c0; border: 3px outset #fff; display: none; flex-direction: column; z-index: 10; width: 85%; max-width: 600px; box-shadow: 5px 5px 0px rgba(0,0,0,0.5); }
+        .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; cursor: move; }
+        .window-content { padding: 10px; overflow-y: auto; max-height: 55vh; color: #000; font-size: 12px; }
 
         /* GAME MCLOVIN STYLES */
-        #animation-zone { height: 80px; background: #222; margin-bottom: 5px; border: 3px inset #808080; display: flex; align-items: flex-end; padding: 5px; gap: 5px; overflow-x: auto; }
-        #mclovin { width: 35px; height: 35px; background: #f0d0b0; border: 2px solid #000; position: relative; flex-shrink: 0; display: flex; justify-content: center; }
-        #mclovin::before { content: "🕶️"; font-size: 12px; position: absolute; top: 0; }
-        #mclovin::after { content: "👕"; font-size: 18px; position: absolute; bottom: -2px; }
+        #animation-zone { height: 75px; background: #222; margin-bottom: 5px; border: 3px inset #808080; display: flex; align-items: flex-end; padding: 5px; gap: 5px; overflow-x: auto; }
         
-        .guest-member { width: 25px; height: 25px; background: #fff; border: 1px solid #000; font-size: 14px; display:flex; align-items:center; justify-content:center; }
+        #mclovin { width: 45px; height: 45px; background: #f0d0b0; border: 2px solid #000; position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; box-shadow: 2px 2px 0px #000; }
+        #mclovin::before { content: "🕶️"; font-size: 16px; margin-top: 2px; z-index: 2; }
+        #mclovin::after { content: "👕"; font-size: 24px; position: absolute; bottom: -4px; }
+        
+        .guest-member { width: 35px; height: 35px; background: #fff; border: 1px solid #000; font-size: 18px; display:flex; align-items:center; justify-content:center; box-shadow: 2px 2px 0px #000; }
+        
         #grid-container { display: grid; grid-template-columns: repeat(15, 1fr); gap: 1px; background: #808080; border: 2px inset #fff; }
-        .cell { aspect-ratio: 1/1; background: #c0c0c0; border: 1px outset #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; cursor: pointer; }
-        .cell.revealed { border: 0.5px solid #999; background: #bdbdbd; }
-        .cell.found { background: #ffff00 !important; }
+        .cell { aspect-ratio: 1/1; background: #c0c0c0; border: 2px outset #fff; display: flex; align-items: center; justify-content: center; font-size: clamp(8px, 2vw, 14px); font-weight: bold; cursor: pointer; }
+        .cell.revealed { border: 1px solid #999; background: #bdbdbd; }
+        .cell.found { background: #ffff00 !important; border: 1px solid #000; }
+        
+        .n1 { color: blue; } .n2 { color: green; } .n3 { color: red; } .n4 { color: darkblue; }
 
         /* TASKBAR */
         #taskbar { height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
         #glitch-clock { margin-left: auto; padding: 0 10px; font-weight: bold; border-left: 2px inset #fff; background: #bdbdbd; font-size: 11px; height: 100%; display: flex; align-items: center; }
         
-        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-family: inherit; font-size: 11px; }
+        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: bold; }
         button:active { border-style: inset; }
 
         @media (max-width: 600px) {
-            #monitor-bezel { padding: 10px; border-radius: 20px; border-width: 5px; }
-            #screen { border-width: 5px; }
+            #monitor-bezel { padding: 10px; border-radius: 15px; border-width: 4px; }
+            #screen { border-width: 8px; }
+            .window { width: 95%; left: 2.5% !important; }
         }
     </style>
 </head>
@@ -118,40 +124,43 @@
             <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
         </div>
 
-        <div id="win-game" class="window" style="top: 5%; left: 5%; width: 90%;">
+        <div id="win-game" class="window" style="top: 5%; left: 5%;">
             <div class="title-bar"><span>McLovin_Sweeper.exe</span><button onclick="closeWin('win-game')">X</button></div>
             <div class="window-content">
                 <div id="animation-zone"><div id="mclovin"></div></div>
-                <div id="status-game" style="font-size:10px; color:#000; font-weight:bold; background:#0f0; padding:2px; margin-bottom:5px;">TROVA I GUEST!</div>
+                <div id="status-game" style="font-size:11px; color:#000; font-weight:bold; background:#0f0; padding:4px; margin-bottom:5px; border: 1px solid #000;">TROVA I GUEST NEL CAMPO!</div>
                 <div id="grid-container"></div>
             </div>
         </div>
 
-        <div id="win-bio" class="window" style="top: 10%; left: 10%;">
+        <div id="win-bio" class="window" style="top: 15%; left: 10%;">
             <div class="title-bar"><span>Bio_Murena.txt</span><button onclick="closeWin('win-bio')">X</button></div>
-            <div class="window-content">
-                <p>Dopo aver pubblicato il suo primo lavoro strumentale nell'estate del 2018, <b>Crunchy Bites</b>, il gruppo si è esibito a JazzMI, MusicalZOO e Jazz On The Road. Il gruppo inizialmente composto da un trio formatosi al Conservatorio di Milano, successivamente si amplia orientandosi verso sonorità rap con l'ingresso di Lorenzo Carminati alla voce.</p>
-                <p>Nel 2021 pubblicano l'album eponimo. Nel 2023 esce <b>WadiruM</b> (prod. Tommaso Colliva) e aprono i Red Hot Chili Peppers agli I-Days. Il 9 maggio 2025 pubblicano <b>Notturno</b>.</p>
+            <div class="window-content" style="font-size: 13px; line-height: 1.4;">
+                <p>Dopo aver pubblicato il suo primo lavoro strumentale nell'estate del 2018, <b>Crunchy Bites</b>, il gruppo si è esibito a JazzMI, MusicalZOO e Jazz On The Road.</p>
+                <p>Il gruppo inizialmente composto da un trio formatosi al Conservatorio di Milano, successivamente si amplia orientandosi verso sonorità rap con l'ingresso di Lorenzo Carminati alla voce.</p>
+                <p>In formazione di sei elementi, nel 2021 pubblicano l'album eponimo. Nell'estate 2021 suonano al Mi Ami, Locus Festival e collaborano con Dardust. Nel 2023 esce <b>WadiruM</b> (prod. Tommaso Colliva) e aprono i concerti di Primal Scream e Red Hot Chili Peppers agli I-Days.</p>
+                <p>Il 9 maggio 2025 pubblicano l'album <b>Notturno</b>, anticipato dal singolo Jazzhighlanders.</p>
             </div>
         </div>
 
-        <div id="win-merch" class="window" style="top: 20%; left: 20%; width: 60%;">
-            <div class="title-bar"><span>Shop.url</span><button onclick="closeWin('win-merch')">X</button></div>
-            <div class="window-content" style="text-align:center;">
-                <a href="https://www.nancymerch.it/studio-murena/" target="_blank" style="color:blue;">VAI ALLO STORE UFFICIALE</a>
+        <div id="win-merch" class="window" style="top: 25%; left: 15%;">
+            <div class="title-bar"><span>Shop_Link.url</span><button onclick="closeWin('win-merch')">X</button></div>
+            <div class="window-content" style="text-align:center; padding: 20px;">
+                <p style="font-size:14px; font-weight:bold;">Supporta la crew, vesti Murena.</p>
+                <a href="https://www.nancymerch.it/studio-murena/" target="_blank" style="color:blue; font-size:16px;">→ VAI ALLO STORE UFFICIALE ←</a>
             </div>
         </div>
 
-        <div id="win-spotify" class="window" style="top: 5%; right: 5%; width: 300px;">
-            <div class="title-bar"><span>Spotify</span><button onclick="closeWin('win-spotify')">X</button></div>
+        <div id="win-spotify" class="window" style="top: 10%; right: 5%;">
+            <div class="title-bar"><span>Spotify_Player</span><button onclick="closeWin('win-spotify')">X</button></div>
             <div class="window-content">
-                <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px;">🎵 PLAY 8-BIT</button>
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/37Z0tNInE0Yn3P0A23jF8m?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <button onclick="document.getElementById('bg-music').play()" style="width:100%; margin-bottom:10px; padding:8px;">🎵 PLAY BASE 8-BIT</button>
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3B3PzM0j38s8vT44Z9f6Xv" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
         </div>
 
         <div id="taskbar">
-            <div style="background:#c0c0c0; border:2px outset #fff; padding:0 5px; font-weight:bold; font-size:12px;">Start</div>
+            <div style="background:#c0c0c0; border:2px outset #fff; padding:2px 8px; font-weight:bold; font-size:12px;">Start</div>
             <div id="glitch-clock">--/--/----</div>
         </div>
     </div>
@@ -168,10 +177,61 @@
     }, 5000);
     clock.innerText = dates[1]();
 
-    // GAME LOGIC
+    // WINDOW MANAGEMENT (DRAG & DROP)
+    let highestZ = 10;
+    function bringToFront(el) {
+        highestZ++;
+        el.style.zIndex = highestZ;
+    }
+
+    function openWin(id) { 
+        const w = document.getElementById(id);
+        w.style.display = 'flex'; 
+        bringToFront(w);
+    }
+    
+    function closeWin(id) { 
+        document.getElementById(id).style.display = 'none'; 
+    }
+
+    document.querySelectorAll('.window').forEach(win => {
+        win.addEventListener('mousedown', () => bringToFront(win));
+        win.addEventListener('touchstart', () => bringToFront(win), {passive: true});
+
+        const tb = win.querySelector('.title-bar');
+        let dragging = false, ox, oy;
+        
+        const startDrag = (e) => {
+            dragging = true;
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            ox = clientX - win.offsetLeft; 
+            oy = clientY - win.offsetTop;
+            bringToFront(win);
+        };
+        
+        const moveDrag = (e) => {
+            if(!dragging) return;
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            win.style.left = (clientX - ox) + 'px';
+            win.style.top = (clientY - oy) + 'px';
+        };
+        
+        const stopDrag = () => { dragging = false; };
+
+        tb.addEventListener('mousedown', startDrag); 
+        tb.addEventListener('touchstart', startDrag, {passive: true});
+        document.addEventListener('mousemove', moveDrag); 
+        document.addEventListener('touchmove', moveDrag, {passive: true});
+        document.addEventListener('mouseup', stopDrag); 
+        document.addEventListener('touchend', stopDrag);
+    });
+
+    // GAME LOGIC FIXATA
     const guests = [
         {n:"Arya", i:"🌬️"}, {n:"Carlo Corallo", i:"🪸"}, {n:"Daykoda", i:"🎛️"}, 
-        {n:"Jack the smoker", i:"🚬"}, {n:"Mezzosangue", i:"🩸"}, {n:"Silent Bob", i:"🛷"}, 
+        {n:"Jack the Smoker", i:"🚬"}, {n:"Mezzosangue", i:"🩸"}, {n:"Silent Bob", i:"🛷"}, 
         {n:"Willie Peyote", i:"🐂"}, {n:"Il Danno", i:"🔦"}, {n:"Ghemon", i:"🗡️"}, {n:"Egreen", i:"🟩"}
     ];
     let found = 0;
@@ -179,12 +239,89 @@
     const matrix = [];
 
     function initGame() {
+        grid.innerHTML = '';
+        found = 0;
+        document.getElementById('status-game').innerText = "TROVA I GUEST NEL CAMPO!";
+        document.getElementById('status-game').style.background = "#0f0";
+        document.getElementById('status-game').style.color = "#000";
+        document.getElementById('animation-zone').innerHTML = '<div id="mclovin"></div>';
+
         for(let r=0; r<10; r++) {
             matrix[r] = [];
             for(let c=0; c<15; c++) matrix[r][c] = { g:null, rev:false, n:0 };
         }
+        
         guests.forEach(g => {
             let ok = false;
             while(!ok) {
                 let r = Math.floor(Math.random()*10), c = Math.floor(Math.random()*15);
-                if(!matrix[r][c].g) { matrix[r][c].g = g; ok
+                if(!matrix[r][c].g) { matrix[r][c].g = g; ok = true; }
+            }
+        });
+        
+        for(let r=0; r<10; r++) {
+            for(let c=0; c<15; c++) {
+                if(!matrix[r][c].g) {
+                    let count = 0;
+                    for(let i=-1; i<=1; i++) {
+                        for(let j=-1; j<=1; j++) {
+                            if(matrix[r+i] && matrix[r+i][c+j] && matrix[r+i][c+j].g) count++;
+                        }
+                    }
+                    matrix[r][c].n = count;
+                }
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.id = `c-${r}-${c}`;
+                cell.onclick = () => reveal(r, c);
+                grid.appendChild(cell);
+            }
+        }
+    }
+
+    function reveal(r, c) {
+        if(matrix[r][c].rev) return;
+        const el = document.getElementById(`c-${r}-${c}`);
+        matrix[r][c].rev = true;
+        el.classList.add('revealed');
+        
+        if(matrix[r][c].g) {
+            const g = matrix[r][c].g;
+            el.innerHTML = g.i; 
+            el.classList.add('found');
+            
+            document.getElementById('status-game').innerText = `${g.n.toUpperCase()} SI È UNITO ALLA CREW!`;
+            
+            const m = document.createElement('div');
+            m.className = 'guest-member'; 
+            m.innerHTML = g.i;
+            m.title = g.n;
+            document.getElementById('animation-zone').appendChild(m);
+            found++;
+            
+            if(found === 10) {
+                document.getElementById('status-game').innerText = "CREW AL COMPLETO! CI VEDIAMO AL MAGNOLIA!";
+                document.getElementById('status-game').style.background = "#ff00ff";
+                document.getElementById('status-game').style.color = "#fff";
+            }
+        } else {
+            if(matrix[r][c].n > 0) {
+                el.innerHTML = matrix[r][c].n;
+                el.classList.add('n' + matrix[r][c].n);
+            } else {
+                for(let i=-1; i<=1; i++) {
+                    for(let j=-1; j<=1; j++) {
+                        let nr = r + i, nc = c + j;
+                        if(nr >= 0 && nr < 10 && nc >= 0 && nc < 15) {
+                            reveal(nr, nc);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    initGame();
+</script>
+</body>
+</html>
