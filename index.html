@@ -73,6 +73,8 @@
             <div id="center-logo">STUDIOMURENA.NET</div>
             <div id="desktop">
                 <a href="game.html" class="icon"><span>🎮</span>GAME.EXE</a>
+                <a href="snake.html" class="icon"><span>🐍</span>SNAKE.EXE</a>
+                
                 <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
                 <a href="https://www.nancymerch.it/studio-murena/" target="_blank" class="icon"><span>👕</span>SHOP.URL</a>
                 <a href="https://link.dice.fm/k2fa8c1a2c43?dice_id=k2fa8c1a2c43" target="_blank" class="icon"><span>🎟️</span>TICKETS.EXE</a>
@@ -90,7 +92,7 @@
             <div id="win-spotify" class="window" style="top:15%; right:5%; width:280px;">
                 <div class="title-bar"><span>Spotify_Player</span><button onclick="closeWin('win-spotify')">X</button></div>
                 <div class="window-content" style="padding:5px;">
-                    <iframe style="border-radius:8px" src="https://open.spotify.com/embed/artist/3B3mNfUv0Yf20i28mGf7S6" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    <iframe style="border-radius:8px" src="https://open.spotify.com/embed/artist/3Bf0pBvF90uVUnK79H9uS2" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 </div>
             </div>
 
@@ -122,7 +124,7 @@
             dateIdx = (dateIdx + 1) % dates.length;
             const currentVal = dates[dateIdx];
             clockEl.innerText = typeof currentVal === 'function' ? currentVal() : currentVal;
-        }, 4000); // Cambia ogni 4 secondi
+        }, 4000); 
         clockEl.innerText = dates[0]();
     </script>
 </body>
