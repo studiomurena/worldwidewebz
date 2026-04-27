@@ -27,8 +27,8 @@
             box-shadow: 0 4px 0 #000; cursor: pointer; touch-action: manipulation;
         }
         button:active { transform: translateY(4px); box-shadow: 0 0 0 #000; background: #333; }
-        
-        /* PULSANTE PER TORNARE AL DESKTOP */
+
+        /* IL TASTO PER TORNARE INDIETRO (STILE WIN95) */
         #back-btn { 
             position: absolute; top: 10px; left: 10px; background: #c0c0c0; color: #000; 
             padding: 5px 10px; text-decoration: none; border: 2px outset #fff; 
@@ -75,21 +75,21 @@ function spawnParticles(x, y, color) {
     for(let i=0; i<10; i++) particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 25, color });
 }
 
-// --- RENDERING AMBIENTI (Versione Alta Qualità) ---
+// --- RENDERING AMBIENTI ---
 function drawBackground(lvl, f) {
-    if (lvl === 1) { // SALA PROVE
+    if (lvl === 1) { 
         let wall = ctx.createLinearGradient(0, 0, 0, 450);
         wall.addColorStop(0, "#2c1c16"); wall.addColorStop(1, "#120a07");
         ctx.fillStyle = wall; ctx.fillRect(0,0,800,450);
         ctx.fillStyle = "#1a110e"; for(let i=0; i<7; i++) ctx.fillRect(50 + i*120, 50, 80, 200);
-        ctx.fillStyle = "#111"; ctx.fillRect(500, 200, 150, 200); // Amp
-        ctx.fillStyle = "#ffcc00"; ctx.fillRect(500, 200, 150, 20); // Gold head
-    } else if (lvl === 2) { // STRADA
+        ctx.fillStyle = "#111"; ctx.fillRect(500, 200, 150, 200); 
+        ctx.fillStyle = "#ffcc00"; ctx.fillRect(500, 200, 150, 20); 
+    } else if (lvl === 2) { 
         ctx.fillStyle = "#080b12"; ctx.fillRect(0,0,800,450);
         ctx.fillStyle = "#0c0f1a"; for(let i=0; i<10; i++) ctx.fillRect((i*150 - f*0.5)%1000-200, 150 - (i%3)*30, 100, 300);
-        ctx.fillStyle = "#e1b12c"; ctx.fillRect(100, 200, 250, 150); // Furgone
+        ctx.fillStyle = "#e1b12c"; ctx.fillRect(100, 200, 250, 150); 
         ctx.fillStyle = "#f5f6fa"; for(let i=0; i<10; i++) ctx.fillRect((i*150 - f*5)%1000-200, 420, 80, 10);
-    } else { // CONCERTO
+    } else { 
         ctx.fillStyle = "#050011"; ctx.fillRect(0,0,800,450);
         ctx.globalCompositeOperation = "screen";
         let r1 = Math.sin(f*0.05)*100;
@@ -105,7 +105,7 @@ function drawBackground(lvl, f) {
     ctx.strokeStyle = "#555"; ctx.lineWidth = 4; ctx.strokeRect(0, 400, 800, 1);
 }
 
-// --- RENDERING NEMICI (RIPRISTINATI QUELLI BELLI) ---
+// --- RENDERING NEMICI E MCLOVIN ---
 function drawEnemy(e) {
     ctx.save(); ctx.translate(e.x, e.y);
     if (e.type === "nacho") {
@@ -113,7 +113,7 @@ function drawEnemy(e) {
         nGrad.addColorStop(0, "#fbc531"); nGrad.addColorStop(1, "#e1b12c");
         ctx.fillStyle = nGrad; ctx.beginPath(); ctx.moveTo(25, 0); ctx.lineTo(0, 50); ctx.lineTo(50, 50); ctx.fill();
         ctx.strokeStyle = "#c23616"; ctx.lineWidth=3; ctx.stroke();
-        ctx.fillStyle = "#111"; ctx.fillRect(15, 20, 5, 5); ctx.fillRect(30, 20, 5, 5); // Occhi
+        ctx.fillStyle = "#111"; ctx.fillRect(15, 20, 5, 5); ctx.fillRect(30, 20, 5, 5); 
     } else if (e.type === "witch") {
         let bob = Math.sin(frame*0.1)*10; ctx.translate(0, bob);
         ctx.fillStyle = "#4cd137"; ctx.fillRect(10, 10, 30, 20);
@@ -124,7 +124,7 @@ function drawEnemy(e) {
         mGrad.addColorStop(0, "#8c7ae6"); mGrad.addColorStop(1, "#44bd32");
         ctx.fillStyle = mGrad; ctx.beginPath(); ctx.moveTo(40, 0); ctx.lineTo(0, 30); ctx.lineTo(20, 60); ctx.lineTo(50, 60); ctx.fill();
         ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(20, 25, 8, 0, 7); ctx.fill();
-        ctx.fillStyle = "#fff"; ctx.fillRect(5, 30, 8, 4); // Denti
+        ctx.fillStyle = "#fff"; ctx.fillRect(5, 30, 8, 4); 
     }
     ctx.restore();
 }
@@ -132,16 +132,13 @@ function drawEnemy(e) {
 function drawMcLovin(x, y, punching, invul) {
     if (invul > 0 && frame % 4 < 2) return;
     ctx.save(); ctx.translate(x, y);
-    // Gambe
     ctx.fillStyle = "#192a56"; ctx.fillRect(10, 60, 12, 35+Math.sin(frame*0.2)*5); ctx.fillRect(28, 60, 12, 35-Math.sin(frame*0.2)*5);
-    // Camicia Hawaiana
     let s = ctx.createLinearGradient(0, 20, 0, 65); s.addColorStop(0, "#e84118"); s.addColorStop(1, "#c23616");
     ctx.fillStyle = s; ctx.fillRect(5, 20, 40, 45);
     ctx.fillStyle = "#fbc531"; ctx.beginPath(); ctx.arc(15, 35, 4, 0, 7); ctx.arc(35, 50, 4, 0, 7); ctx.fill();
-    // Testa
     ctx.fillStyle = "#ffcca2"; ctx.fillRect(10, -15, 30, 35);
-    ctx.fillStyle = "#2f3640"; ctx.fillRect(10, -18, 30, 10); // Capelli
-    ctx.fillStyle = "#fff"; ctx.fillRect(12,-5,12,10); ctx.fillRect(28,-5,12,10); // Occhiali
+    ctx.fillStyle = "#2f3640"; ctx.fillRect(10, -18, 30, 10); 
+    ctx.fillStyle = "#fff"; ctx.fillRect(12,-5,12,10); ctx.fillRect(28,-5,12,10); 
     ctx.strokeStyle = "#000"; ctx.strokeRect(12,-5,12,10); ctx.strokeRect(28,-5,12,10);
     if (punching > 0) { ctx.fillStyle = "#ffcca2"; ctx.fillRect(45, 30, 35, 12); ctx.fillStyle = "#ff0055"; ctx.fillRect(80, 25, 15, 20); }
     ctx.restore();
@@ -209,7 +206,7 @@ function draw() {
         enemies.forEach(drawEnemy);
         bullets.forEach(b => { ctx.fillStyle="#0f0"; ctx.beginPath(); ctx.arc(b.x, b.y, 8,0,7); ctx.fill(); });
         particles.forEach(p => { ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,5,5); });
-        // HUD
+        
         ctx.fillStyle = "#333"; ctx.fillRect(20, 20, 200, 20);
         ctx.fillStyle = hp > 3 ? "#0f0" : "#f00"; ctx.fillRect(20, 20, hp * 20, 20);
         ctx.fillStyle = "#fff"; ctx.font = "14px Arial"; ctx.fillText("HP: " + hp, 25, 35);
