@@ -2,252 +2,236 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STUDIO MURENA - OS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>McLovin: Studio Murena Ultimate Arcade</title>
     <style>
-        :root { --monitor-color: #d9d9d9; }
-        * { box-sizing: border-box; }
         body { 
-            background: #1a1a1a; margin: 0; padding: 0;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; width: 100vw; overflow: hidden;
-            font-family: "Courier New", monospace;
+            background: #000; margin: 0; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; height: 100vh; overflow: hidden; 
+            font-family: 'Arial Black', Impact, sans-serif;
         }
-        #monitor-bezel {
-            width: 95vw; max-width: 950px;
-            aspect-ratio: 4 / 3;
-            background: var(--monitor-color);
-            border-radius: 30px; padding: 15px;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 30px 60px rgba(0,0,0,0.8);
-            border: 10px solid #b0b0b0;
-            position: relative; display: flex; justify-content: center; align-items: center;
+        #canvas-container { position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; }
+        canvas { 
+            width: 100%; height: 100%; border: 4px solid #333; border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.2); display: block; background: #111;
         }
-        #screen {
-            width: 100%; height: 100%;
-            background: #008080; position: relative; overflow: hidden;
-            border-radius: 10px; border: 12px solid #111;
-            display: flex; flex-direction: column;
+        #controls {
+            margin-top: 15px; display: flex; justify-content: space-between;
+            width: 100%; max-width: 800px; padding: 0 10px; box-sizing: border-box;
         }
-        /* Effetto Scanlines CRT */
-        #screen::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.02));
-            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 99;
+        .btn-group { display: flex; gap: 10px; }
+        button {
+            background: linear-gradient(180deg, #444 0%, #111 100%); color: #fff; 
+            border: 2px solid #666; border-radius: 50px; padding: 15px 25px; 
+            font-family: inherit; font-weight: bold; font-size: 14px;
+            box-shadow: 0 4px 0 #000; cursor: pointer; touch-action: manipulation;
         }
-        #center-logo {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: clamp(18px, 4vw, 35px); font-weight: bold;
-            text-align: center; pointer-events: none; opacity: 0.4;
-            animation: color-shift 3s infinite;
-        }
-        @keyframes color-shift { 0% { color: #0f0; } 33% { color: #f0f; } 66% { color: #0ff; } 100% { color: #0f0; } }
-
-        #desktop { 
-            flex-grow: 1; padding: 15px; 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
-            grid-auto-rows: min-content;
-            gap: 15px; z-index: 2; 
-        }
-        .icon { width: 80px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; text-decoration: none; font-size: 11px; font-weight: bold; }
-        .icon span { font-size: 35px; display: block; margin-bottom: 5px; }
-
-        /* Stile Finestre Win95 */
-        .window { position: absolute; background: #c0c0c0; border: 3px outset #fff; display: none; flex-direction: column; z-index: 10; box-shadow: 5px 5px 0px #000; }
-        .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-        .window-content { padding: 5px; color: #000; overflow: hidden; }
+        button:active { transform: translateY(4px); box-shadow: 0 0 0 #000; background: #333; }
         
-        /* Contenitore Gioco */
-        #game-wrapper { background: #000; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
-        #gameCanvas { width: 100%; max-width: 600px; height: auto; border: 2px solid #333; }
-        .game-btns { display: flex; gap: 5px; margin-top: 5px; width: 100%; justify-content: center; }
-        .game-btns button { padding: 8px; font-size: 10px; }
-
-        #taskbar { height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 2px 5px; z-index: 100; }
-        #glitch-clock { 
-            margin-left: auto; padding: 0 10px; font-weight: bold; 
-            border-left: 2px inset #fff; background: #bdbdbd; 
-            font-size: 11px; height: 100%; display: flex; align-items: center; color: #000;
+        /* PULSANTE PER TORNARE AL DESKTOP */
+        #back-btn { 
+            position: absolute; top: 10px; left: 10px; background: #c0c0c0; color: #000; 
+            padding: 5px 10px; text-decoration: none; border: 2px outset #fff; 
+            font-family: 'Courier New', monospace; font-size: 12px; font-weight: bold; z-index: 100;
         }
-        button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-weight: bold; font-family: inherit; }
-        button:active { border-style: inset; }
+        #back-btn:active { border-style: inset; }
     </style>
 </head>
 <body>
-    <div id="monitor-bezel">
-        <div id="screen">
-            <div id="center-logo">STUDIOMURENA.NET</div>
-            
-            <div id="desktop">
-                <div class="icon" onclick="openWin('win-game')"><span>🎮</span>GAME.EXE</div>
-                
-                <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
-                <a href="https://www.nancymerch.it/studio-murena/" target="_blank" class="icon"><span>👕</span>SHOP.URL</a>
-                <div class="icon" onclick="openWin('win-spotify')"><span>📻</span>AUDIO.WAV</div>
-            </div>
 
-            <div id="win-game" class="window" style="top:5%; left:5%; width: 90%;">
-                <div class="title-bar"><span>McLovin_Arcade_v1.0</span><button onclick="closeWin('win-game')">X</button></div>
-                <div class="window-content">
-                    <div id="game-wrapper">
-                        <canvas id="gameCanvas" width="800" height="450"></canvas>
-                        <div class="game-btns">
-                            <button onmousedown="press('ArrowUp')">▲ JUMP</button>
-                            <button onmousedown="press('ArrowDown')">▼ OK</button>
-                            <button onmousedown="press('ArrowRight')" style="background: #ff0055; color: #fff;">👊 PUNCH</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<a href="index.html" id="back-btn">← DESKTOP</a>
 
-            <div id="win-bio" class="window" style="top:10%; left:10%; width: 250px;">
-                <div class="title-bar"><span>Bio.txt</span><button onclick="closeWin('win-bio')">X</button></div>
-                <div class="window-content" style="padding: 10px;">
-                    <b>Studio Murena</b>: Il sestetto milanese che fonde jazzcore e hip-hop. <br><br>
-                    McLovin ha salvato lo Studio Mu!
-                </div>
-            </div>
+<div id="canvas-container">
+    <canvas id="gameCanvas" width="800" height="450"></canvas>
+</div>
 
-            <div id="taskbar">
-                <button style="padding: 2px 10px;">Start</button>
-                <div id="glitch-clock">--/--/----</div>
-            </div>
-        </div>
+<div id="controls">
+    <div class="btn-group">
+        <button onmousedown="press('ArrowUp')" ontouchstart="press('ArrowUp')">▲ SALTA</button>
+        <button onmousedown="press('ArrowDown')" ontouchstart="press('ArrowDown')">▼ OK / RESTART</button>
     </div>
+    <div class="btn-group">
+        <button onmousedown="press('ArrowRight')" ontouchstart="press('ArrowRight')" style="background: linear-gradient(180deg, #ff0055 0%, #990033 100%);">👊 PUGNO / START</button>
+    </div>
+</div>
 
-    <script>
-        // LOGICA FINESTRE
-        function openWin(id) { 
-            const wins = document.querySelectorAll('.window');
-            wins.forEach(w => w.style.zIndex = 10);
-            const target = document.getElementById(id);
-            target.style.display = 'flex'; 
-            target.style.zIndex = 20;
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let state = "INTRO"; 
+let frame = 0; let level = 1; let kills = 0; let hp = 10;
+let cameraShake = 0; let storyTitle = ""; let storySub = "";
+
+const player = { x: 100, y: 300, vy: 0, gravity: 0.7, jump: -15, grounded: true, punching: 0, invul: 0 };
+let enemies = []; let particles = []; let bullets = [];
+
+const keys = {};
+window.onkeydown = (e) => keys[e.code] = true;
+window.onkeyup = (e) => keys[e.code] = false;
+function press(c) { keys[c] = true; setTimeout(() => keys[c] = false, 100); }
+
+function spawnParticles(x, y, color) {
+    for(let i=0; i<10; i++) particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 25, color });
+}
+
+// --- RENDERING AMBIENTI (Versione Alta Qualità) ---
+function drawBackground(lvl, f) {
+    if (lvl === 1) { // SALA PROVE
+        let wall = ctx.createLinearGradient(0, 0, 0, 450);
+        wall.addColorStop(0, "#2c1c16"); wall.addColorStop(1, "#120a07");
+        ctx.fillStyle = wall; ctx.fillRect(0,0,800,450);
+        ctx.fillStyle = "#1a110e"; for(let i=0; i<7; i++) ctx.fillRect(50 + i*120, 50, 80, 200);
+        ctx.fillStyle = "#111"; ctx.fillRect(500, 200, 150, 200); // Amp
+        ctx.fillStyle = "#ffcc00"; ctx.fillRect(500, 200, 150, 20); // Gold head
+    } else if (lvl === 2) { // STRADA
+        ctx.fillStyle = "#080b12"; ctx.fillRect(0,0,800,450);
+        ctx.fillStyle = "#0c0f1a"; for(let i=0; i<10; i++) ctx.fillRect((i*150 - f*0.5)%1000-200, 150 - (i%3)*30, 100, 300);
+        ctx.fillStyle = "#e1b12c"; ctx.fillRect(100, 200, 250, 150); // Furgone
+        ctx.fillStyle = "#f5f6fa"; for(let i=0; i<10; i++) ctx.fillRect((i*150 - f*5)%1000-200, 420, 80, 10);
+    } else { // CONCERTO
+        ctx.fillStyle = "#050011"; ctx.fillRect(0,0,800,450);
+        ctx.globalCompositeOperation = "screen";
+        let r1 = Math.sin(f*0.05)*100;
+        ctx.fillStyle = "rgba(0, 255, 255, 0.2)";
+        ctx.beginPath(); ctx.moveTo(400, 0); ctx.lineTo(100+r1, 450); ctx.lineTo(300+r1, 450); ctx.fill();
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = "#000"; for(let i=0; i<20; i++) {
+            let bob = Math.sin(f*0.1 + i)*10;
+            ctx.beginPath(); ctx.arc(40 + i*40, 400 + bob, 20, 0, Math.PI*2); ctx.fill();
         }
-        function closeWin(id) { document.getElementById(id).style.display = 'none'; }
+    }
+    ctx.fillStyle = "#111"; ctx.fillRect(0, 400, 800, 50);
+    ctx.strokeStyle = "#555"; ctx.lineWidth = 4; ctx.strokeRect(0, 400, 800, 1);
+}
 
-        // --- MOTORE DI GIOCO McLOVIN (Integrato) ---
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        let state = "INTRO"; let frame = 0; let level = 1; let kills = 0; let hp = 10;
-        let cameraShake = 0; let storyTitle = ""; let storySub = "";
-        const player = { x: 100, y: 300, vy: 0, gravity: 0.7, jump: -15, grounded: true, punching: 0, invul: 0 };
-        let enemies = []; let particles = []; let bullets = [];
-        const keys = {};
-        window.onkeydown = (e) => keys[e.code] = true;
-        window.onkeyup = (e) => keys[e.code] = false;
-        function press(c) { keys[c] = true; setTimeout(() => keys[c] = false, 100); }
+// --- RENDERING NEMICI (RIPRISTINATI QUELLI BELLI) ---
+function drawEnemy(e) {
+    ctx.save(); ctx.translate(e.x, e.y);
+    if (e.type === "nacho") {
+        let nGrad = ctx.createLinearGradient(0,0,0,40);
+        nGrad.addColorStop(0, "#fbc531"); nGrad.addColorStop(1, "#e1b12c");
+        ctx.fillStyle = nGrad; ctx.beginPath(); ctx.moveTo(25, 0); ctx.lineTo(0, 50); ctx.lineTo(50, 50); ctx.fill();
+        ctx.strokeStyle = "#c23616"; ctx.lineWidth=3; ctx.stroke();
+        ctx.fillStyle = "#111"; ctx.fillRect(15, 20, 5, 5); ctx.fillRect(30, 20, 5, 5); // Occhi
+    } else if (e.type === "witch") {
+        let bob = Math.sin(frame*0.1)*10; ctx.translate(0, bob);
+        ctx.fillStyle = "#4cd137"; ctx.fillRect(10, 10, 30, 20);
+        ctx.fillStyle = "#111"; ctx.beginPath(); ctx.moveTo(25, -30); ctx.lineTo(5, 10); ctx.lineTo(45, 10); ctx.fill();
+        ctx.fillStyle = "#2f3640"; ctx.fillRect(10, 30, 30, 40);
+    } else {
+        let mGrad = ctx.createLinearGradient(0,0,40,60);
+        mGrad.addColorStop(0, "#8c7ae6"); mGrad.addColorStop(1, "#44bd32");
+        ctx.fillStyle = mGrad; ctx.beginPath(); ctx.moveTo(40, 0); ctx.lineTo(0, 30); ctx.lineTo(20, 60); ctx.lineTo(50, 60); ctx.fill();
+        ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(20, 25, 8, 0, 7); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.fillRect(5, 30, 8, 4); // Denti
+    }
+    ctx.restore();
+}
 
-        function spawnParticles(x, y, color) {
-            for(let i=0; i<8; i++) particles.push({ x, y, vx: (Math.random()-0.5)*12, vy: (Math.random()-0.5)*12, life: 20, color });
+function drawMcLovin(x, y, punching, invul) {
+    if (invul > 0 && frame % 4 < 2) return;
+    ctx.save(); ctx.translate(x, y);
+    // Gambe
+    ctx.fillStyle = "#192a56"; ctx.fillRect(10, 60, 12, 35+Math.sin(frame*0.2)*5); ctx.fillRect(28, 60, 12, 35-Math.sin(frame*0.2)*5);
+    // Camicia Hawaiana
+    let s = ctx.createLinearGradient(0, 20, 0, 65); s.addColorStop(0, "#e84118"); s.addColorStop(1, "#c23616");
+    ctx.fillStyle = s; ctx.fillRect(5, 20, 40, 45);
+    ctx.fillStyle = "#fbc531"; ctx.beginPath(); ctx.arc(15, 35, 4, 0, 7); ctx.arc(35, 50, 4, 0, 7); ctx.fill();
+    // Testa
+    ctx.fillStyle = "#ffcca2"; ctx.fillRect(10, -15, 30, 35);
+    ctx.fillStyle = "#2f3640"; ctx.fillRect(10, -18, 30, 10); // Capelli
+    ctx.fillStyle = "#fff"; ctx.fillRect(12,-5,12,10); ctx.fillRect(28,-5,12,10); // Occhiali
+    ctx.strokeStyle = "#000"; ctx.strokeRect(12,-5,12,10); ctx.strokeRect(28,-5,12,10);
+    if (punching > 0) { ctx.fillStyle = "#ffcca2"; ctx.fillRect(45, 30, 35, 12); ctx.fillStyle = "#ff0055"; ctx.fillRect(80, 25, 15, 20); }
+    ctx.restore();
+}
+
+function update() {
+    frame++;
+    if (state === "INTRO" && (keys["ArrowRight"] || keys["ArrowUp"])) state = "PLAY";
+    if (state === "STORY_BREAK" && keys["ArrowDown"]) state = "PLAY";
+    if (state === "GAMEOVER" && keys["ArrowDown"]) { hp=10; kills=0; level=1; enemies=[]; bullets=[]; state="PLAY"; }
+
+    if (state === "PLAY") {
+        if (keys["ArrowUp"] && player.grounded) { player.vy = player.jump; player.grounded = false; }
+        player.vy += player.gravity; player.y += player.vy;
+        if (player.y > 300) { player.y = 300; player.vy = 0; player.grounded = true; }
+        if (keys["ArrowRight"] && player.punching === 0) { player.punching = 12; cameraShake = 10; }
+        if (player.punching > 0) player.punching--;
+        if (player.invul > 0) player.invul--;
+
+        if (frame % 80 === 0) {
+            let t = level === 1 ? "nacho" : (level === 2 ? "witch" : "murena");
+            enemies.push({ x: 850, y: t==="witch"?250:330, type: t });
+            if (t === "murena") bullets.push({ x: 850, y: 350, vx: -7 });
         }
 
-        function drawEnemy(e) {
-            ctx.save(); ctx.translate(e.x, e.y);
-            if (e.type === "nacho") {
-                ctx.fillStyle = "#fbc531"; ctx.beginPath(); ctx.moveTo(25, 0); ctx.lineTo(0, 50); ctx.lineTo(50, 50); ctx.fill();
-            } else if (e.type === "witch") {
-                ctx.fillStyle = "#4cd137"; ctx.fillRect(10, 10, 30, 20); ctx.fillStyle = "#000"; ctx.beginPath(); ctx.moveTo(25, -20); ctx.lineTo(5, 10); ctx.lineTo(45, 10); ctx.fill();
-            } else {
-                ctx.fillStyle = "#8c7ae6"; ctx.beginPath(); ctx.moveTo(40, 0); ctx.lineTo(0, 30); ctx.lineTo(20, 60); ctx.lineTo(50, 60); ctx.fill();
-                ctx.fillStyle = "#fff"; ctx.fillRect(5, 30, 8, 4);
+        enemies.forEach((e, i) => {
+            e.x -= (4 + level);
+            if (player.punching > 0 && Math.abs(player.x+50-e.x) < 50 && Math.abs(player.y-e.y) < 60) {
+                spawnParticles(e.x, e.y, "#ff00aa"); enemies.splice(i,1); kills++;
+                if (kills === 10) { state="STORY_BREAK"; level=2; storyTitle="MALEDETTI NACHOS!"; storySub="Fatevi sotto, STREGHE!"; }
+                if (kills === 20) { state="STORY_BREAK"; level=3; storyTitle="MURENE NELLA TANA!"; storySub="LA FORZA DELLO STUDIOMUUUU SIA CON ME!"; }
+                if (kills >= 40) state = "WIN";
+            } else if (Math.abs(player.x-e.x) < 30 && Math.abs(player.y-e.y) < 50 && player.invul === 0) {
+                hp--; player.invul = 60; cameraShake = 20; if (hp <= 0) state = "GAMEOVER";
             }
-            ctx.restore();
-        }
+        });
 
-        function drawMcLovin(x, y, punching, invul) {
-            if (invul > 0 && frame % 4 < 2) return;
-            ctx.save(); ctx.translate(x, y);
-            ctx.fillStyle = "#192a56"; ctx.fillRect(10, 60, 12, 35); ctx.fillRect(28, 60, 12, 35);
-            ctx.fillStyle = "#e84118"; ctx.fillRect(5, 20, 40, 45); // Shirt
-            ctx.fillStyle = "#ffcca2"; ctx.fillRect(10, -15, 30, 35); // Face
-            ctx.fillStyle = "#fff"; ctx.fillRect(12,-5,12,10); ctx.fillRect(28,-5,12,10); // Glasses
-            if (punching > 0) { ctx.fillStyle = "#ffcca2"; ctx.fillRect(45, 30, 35, 12); }
-            ctx.restore();
-        }
-
-        function update() {
-            if (document.getElementById('win-game').style.display === 'none') return;
-            frame++;
-            if (state === "INTRO" && (keys["ArrowRight"] || keys["ArrowUp"])) state = "PLAY";
-            if (state === "STORY_BREAK" && keys["ArrowDown"]) state = "PLAY";
-            if (state === "GAMEOVER" && keys["ArrowDown"]) { hp=10; kills=0; level=1; enemies=[]; bullets=[]; state="PLAY"; }
-
-            if (state === "PLAY") {
-                if (keys["ArrowUp"] && player.grounded) { player.vy = player.jump; player.grounded = false; }
-                player.vy += player.gravity; player.y += player.vy;
-                if (player.y > 300) { player.y = 300; player.vy = 0; player.grounded = true; }
-                if (keys["ArrowRight"] && player.punching === 0) { player.punching = 12; cameraShake = 10; }
-                if (player.punching > 0) player.punching--;
-                if (player.invul > 0) player.invul--;
-
-                if (frame % 80 === 0) {
-                    let t = level === 1 ? "nacho" : (level === 2 ? "witch" : "murena");
-                    enemies.push({ x: 850, y: t==="witch"?250:330, type: t });
-                    if (t === "murena") bullets.push({ x: 850, y: 350, vx: -7 });
-                }
-
-                enemies.forEach((e, i) => {
-                    e.x -= (4 + level);
-                    if (player.punching > 0 && Math.abs(player.x+50-e.x) < 50 && Math.abs(player.y-e.y) < 60) {
-                        spawnParticles(e.x, e.y, "#ff00aa"); enemies.splice(i,1); kills++;
-                        if (kills === 10) { state="STORY_BREAK"; level=2; storyTitle="MALEDETTI NACHOS!"; storySub="Prossima fermata: STRADA"; }
-                        if (kills === 20) { state="STORY_BREAK"; level=3; storyTitle="MURENE IN AGGUATO!"; storySub="Salva lo Studio Mu!"; }
-                        if (kills >= 40) state = "WIN";
-                    } else if (Math.abs(player.x-e.x) < 30 && Math.abs(player.y-e.y) < 50 && player.invul === 0) {
-                        hp--; player.invul = 60; cameraShake = 15; if (hp <= 0) state = "GAMEOVER";
-                    }
-                });
-                bullets.forEach((b, i) => {
-                    b.x += b.vx; if (Math.abs(player.x-b.x)<30 && Math.abs(player.y-b.y)<50 && player.invul===0) {
-                        hp--; player.invul=60; bullets.splice(i,1); if(hp<=0) state="GAMEOVER";
-                    }
-                });
-                particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.life--; if(p.life<0) particles.splice(i,1); });
+        bullets.forEach((b, i) => {
+            b.x += b.vx; if (Math.abs(player.x-b.x)<30 && Math.abs(player.y-b.y)<50 && player.invul===0) {
+                hp--; player.invul=60; bullets.splice(i,1); if(hp<=0) state="GAMEOVER";
             }
-        }
+        });
+        particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.life--; if(p.life<0) particles.splice(i,1); });
+    }
+}
 
-        function draw() {
-            ctx.save();
-            if (cameraShake > 0) { ctx.translate((Math.random()-0.5)*cameraShake, (Math.random()-0.5)*cameraShake); cameraShake *= 0.8; }
-            
-            // Background Semplice per performance
-            ctx.fillStyle = level === 1 ? "#120a07" : (level === 2 ? "#080b12" : "#050011");
-            ctx.fillRect(0,0,800,450);
-            ctx.fillStyle = "#222"; ctx.fillRect(0, 400, 800, 50);
+function draw() {
+    ctx.save(); if (cameraShake > 0) { ctx.translate((Math.random()-0.5)*cameraShake, (Math.random()-0.5)*cameraShake); cameraShake *= 0.8; }
+    drawBackground(level, frame);
 
-            if (state === "INTRO") {
-                ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = "25px Arial";
-                ctx.fillText("McLOVIN ARCADE", 400, 200);
-                ctx.font = "15px Arial"; ctx.fillText("PREMI [PUNCH] PER INIZIARE", 400, 250);
-            } else if (state === "PLAY") {
-                drawMcLovin(player.x, player.y, player.punching, player.invul);
-                enemies.forEach(drawEnemy);
-                bullets.forEach(b => { ctx.fillStyle="#0f0"; ctx.beginPath(); ctx.arc(b.x, b.y, 8,0,7); ctx.fill(); });
-                ctx.fillStyle = "#f00"; ctx.fillRect(20, 20, hp * 15, 10); // HP Bar
-                ctx.fillStyle = "#fff"; ctx.font = "14px Arial"; ctx.fillText("KILLS: " + kills, 740, 30);
-            } else if (state === "WIN") {
-                ctx.fillStyle = "#0ff"; ctx.textAlign = "center"; ctx.font = "30px Arial";
-                ctx.fillText("MISSION ACCOMPLISHED!", 400, 150);
-                ctx.fillStyle = "#fff"; ctx.font = "16px Arial";
-                ctx.fillText("McLovin ha salvato il mondo.", 400, 200);
-                ctx.fillText("Ora può ascoltare lo STUDIO MU in pace.", 400, 230);
-            } else if (state === "GAMEOVER") {
-                ctx.fillStyle = "#f00"; ctx.textAlign = "center"; ctx.font = "40px Arial"; ctx.fillText("GAME OVER", 400, 200);
-            } else if (state === "STORY_BREAK") {
-                ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = "20px Arial"; ctx.fillText(storyTitle, 400, 200);
-                ctx.fillText("PREMI [OK]", 400, 260);
-            }
-            ctx.restore();
-        }
+    if (state === "INTRO") {
+        ctx.fillStyle = "rgba(0,0,0,0.85)"; ctx.fillRect(0,0,800,450);
+        ctx.textAlign = "center"; ctx.fillStyle = "#fff";
+        ctx.font = "italic 35px 'Arial Black'"; ctx.fillText("MCLOVIN: ARCADE EDITION", 400, 100);
+        ctx.font = "16px Arial"; ctx.fillText("McLovin è il fan #1 degli STUDIO MURENA.", 400, 150);
+        ctx.fillText("Niente fermerà il suo concerto, nemmeno un'apocalisse aliena!", 400, 180);
+        ctx.fillStyle = "#ff00aa"; ctx.fillText("PREMI [PUGNO] PER COMBATTERE!", 400, 300);
+    } else if (state === "STORY_BREAK") {
+        ctx.fillStyle = "rgba(0,0,0,0.9)"; ctx.fillRect(0,0,800,450);
+        ctx.textAlign = "center"; ctx.fillStyle = "#0ff"; ctx.font = "40px 'Arial Black'"; ctx.fillText(storyTitle, 400, 200);
+        ctx.fillStyle = "#fff"; ctx.font = "20px Arial"; ctx.fillText(storySub, 400, 250);
+        ctx.fillText("PREMI [▼ OK] PER PROSEGUIRE", 400, 350);
+    } else if (state === "PLAY") {
+        drawMcLovin(player.x, player.y, player.punching, player.invul);
+        enemies.forEach(drawEnemy);
+        bullets.forEach(b => { ctx.fillStyle="#0f0"; ctx.beginPath(); ctx.arc(b.x, b.y, 8,0,7); ctx.fill(); });
+        particles.forEach(p => { ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,5,5); });
+        // HUD
+        ctx.fillStyle = "#333"; ctx.fillRect(20, 20, 200, 20);
+        ctx.fillStyle = hp > 3 ? "#0f0" : "#f00"; ctx.fillRect(20, 20, hp * 20, 20);
+        ctx.fillStyle = "#fff"; ctx.font = "14px Arial"; ctx.fillText("HP: " + hp, 25, 35);
+        ctx.fillText("KILL: " + kills + "/40", 700, 35);
+    } else if (state === "GAMEOVER") {
+        ctx.fillStyle = "rgba(100,0,0,0.7)"; ctx.fillRect(0,0,800,450);
+        ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.font = "60px 'Arial Black'"; ctx.fillText("WASTED", 400, 220);
+        ctx.font = "20px Arial"; ctx.fillText("PREMI [▼ RESTART] PER RIPROVARE", 400, 280);
+    } else if (state === "WIN") {
+        ctx.fillStyle = "#000"; ctx.fillRect(0,0,800,450);
+        ctx.textAlign = "center"; ctx.fillStyle = "#0ff"; ctx.font = "35px 'Arial Black'"; ctx.fillText("MISSION ACCOMPLISHED!", 400, 120);
+        ctx.fillStyle = "#fff"; ctx.font = "18px Arial";
+        ctx.fillText("McLovin ha salvato il suo mondo e scacciato le minacce!", 400, 180);
+        ctx.fillText("Ora può finalmente ascoltare lo STUDIO MU in pace.", 400, 210);
+        ctx.fillStyle = "#ff00aa"; ctx.font = "24px 'Arial Black'";
+        drawMcLovin(375, 320, 0, 0);
+    }
+    ctx.restore();
+}
 
-        function loop() { update(); draw(); requestAnimationFrame(loop); }
-        loop();
-
-        // OROLOGIO
-        const clockEl = document.getElementById('glitch-clock');
-        setInterval(() => { clockEl.innerText = new Date().toLocaleTimeString('it-IT'); }, 1000);
-    </script>
+function loop() { update(); draw(); requestAnimationFrame(loop); }
+loop();
+</script>
 </body>
 </html>
