@@ -72,8 +72,9 @@
         <div id="screen">
             <div id="center-logo">STUDIOMURENA.NET</div>
             <div id="desktop">
-                <a href="game.html" class="icon"><span>🎮</span>GAME.EXE</a>
+                <a href="game.html" class="icon"><span>💣</span>MINES.EXE</a>
                 <a href="snake.html" class="icon"><span>🐍</span>SNAKE.EXE</a>
+                <a href="arcade.html" class="icon"><span>🚀</span>ARCADE.EXE</a>
                 
                 <div class="icon" onclick="openWin('win-bio')"><span>👤</span>BIO.TXT</div>
                 <a href="https://www.nancymerch.it/studio-murena/" target="_blank" class="icon"><span>👕</span>SHOP.URL</a>
@@ -112,12 +113,11 @@
         }
         function closeWin(id) { document.getElementById(id).style.display = 'none'; }
 
-        // LOGICA GLITCH CLOCK
         const clockEl = document.getElementById('glitch-clock');
         const dates = [
-            () => new Date().toLocaleDateString('it-IT'), // Real Time
-            "01/01/1983",                                 // Inaugurazione Internet
-            "18/06/2026"                                  // Futuro
+            () => new Date().toLocaleDateString('it-IT'),
+            "01/01/1983",
+            "18/06/2026"
         ];
         let dateIdx = 0;
         setInterval(() => {
