@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MURENA CHASE GOLD</title>
+    <style>
+        :root { --win-bg: #c0c0c0; --crt-bg: #008080; }
+        * { box-sizing: border-box; touch-action: none; -webkit-tap-highlight-color: transparent; }
+        body { background: #1a1a1a; margin: 0; font-family: "Courier New", monospace; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        #header { background: var(--win-bg); color: #000; padding: 8px; border-bottom: 3px outset #fff; display: flex; justify-content: space-between; align-items: center; }
+        #back-btn { background: var(--win-bg); border: 2px outset #fff; padding: 4px 8px; text-decoration: none; color: #000; font-weight: bold; font-size: 12px; }
+        #monitor { flex-grow: 1; background: #222; display: flex; align-items: center; justify-content: center; position: relative; padding: 10px; }
+        #screen-border { width: 100%; max-width: 400px; aspect-ratio: 1/1; background: #333; border: 12px solid #555; border-radius: 20px; position: relative; box-shadow: inset 0 0 50px #000; overflow: hidden; }
+        #screen-border::after { content: ""; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%), linear-gradient(90deg, rgba(255,0,0,0.02), rgba(0,255,0,0.01), rgba(0,0,255,0.02)); background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 5; }
+        canvas { width: 100%; height: 100%; background: var(--crt-bg); display: block; image-rendering: pixelated; }
+        #stats { position: absolute; top: 10px; left: 10px; color: #fff; font-size: 14px; z-index: 10; text-shadow: 2px 2px #000; font-weight: bold; }
+        #controls { background: var(--win-bg); padding: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 3px outset #fff; }
+        .btn { background: var(--win-bg); border: 3px outset #fff; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #000; }
+        .btn:active { border-style: inset; background: #a0a0a0; }
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; color: #fff; text-align: center; }
+        #start-btn { background: var(--win-bg); border: 3px outset #fff; padding: 12px 25px; font-family: inherit; font-weight: bold; cursor: pointer; margin-top: 10px; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+        <span>Murena_Chase_Gold.exe</span>
+        <a href="index.html" id="back-btn">← DESKTOP</a>
+    </div>
+
+    <div id="monitor">
+        <div id="screen-border">
+            <div id="stats">SCORE: <span id="score-val">0</span></div>
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+            <div id="overlay">
+                <h2 id="msg">MURENA CHASE</h2>
+                <p id="sub-msg">MANGIA I NACHOS 🌮</p>
+                <button id="start-btn" onclick="initGame()">RESTART.EXE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="controls">
+        <div class="btn" style="grid-column: 2" ontouchstart="setDir('up')">▲</div>
+        <div class="btn" style="grid-row: 2; grid-column: 1" ontouchstart="setDir('left')">◀</div>
+        <div class="btn" style="grid-row: 2; grid-column: 2" ontouchstart="setDir('down')">▼</div>
+        <div class="btn" style="grid-row: 2; grid-column: 3" ontouchstart="setDir('right')">▶</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreEl = document.getElementById("score-val");
+        const overlay = document.getElementById("overlay");
+        const grid = 20;
+        let snake, foods, d, score, gameSpeed, gameActive, isDying, mDeathY, mDeathVel;
+
+        function initGame() {
+            snake = [{x: 10*grid, y: 10*grid}];
+            foods = [spawnFood()]; // Inizia con un nacho
+            d = "right"; score = 0; gameSpeed = 150;
+            gameActive = true; isDying = false;
+            scoreEl.innerText = score;
+            overlay.style.display = "none";
+            gameLoop();
+        }
+
+        function spawnFood() {
+            return {
+                x: Math.floor(Math.random() * 19) * grid,
+                y: Math.floor(Math.random() * 19) * grid
+            };
+        }
+
+        function setDir(dir) {
+            if (dir === "left" && d !== "right") d = "left";
+            if (dir === "up" && d !== "down") d = "up";
+            if (dir === "right" && d !== "left") d = "right";
+            if (dir === "down" && d !== "up") d = "down";
+        }
+
+        window.addEventListener("keydown", e => {
+            const key = e.key.replace("Arrow", "").toLowerCase();
+            if (["up", "down", "left", "right"].includes(key)) setDir(key);
+        });
+
+        function gameLoop() {
+            if (!gameActive) return;
+            if (isDying) { animateDeath(); return; }
+            move();
+            draw();
+            setTimeout(gameLoop, gameSpeed);
+        }
+
+        function move() {
+            let hX = snake[0].x, hY = snake[0].y;
+            if (d === "left") hX -= grid; if (d === "up") hY -= grid;
+            if (d === "right") hX += grid; if (d === "down") hY += grid;
+
+            if (hX < 0 || hX >= 400 || hY < 0 || hY >= 400 || snake.some((s,i) => i>0 && s.x === hX && s.y === hY)) {
+                isDying = true; mDeathY = snake[0].y; mDeathVel = -12;
+                return;
+            }
+
+            const newHead = {x: hX, y: hY};
+            let ate = false;
+
+            foods.forEach((f, index) => {
+                if (hX === f.x && hY === f.y) {
+                    score++;
+                    scoreEl.innerText = score;
+                    foods[index] = spawnFood();
+                    if (gameSpeed > 50) gameSpeed -= 4;
+                    ate = true;
+                    // Logica aggiunta Nachos
+                    if (score === 10) foods.push(spawnFood());
+                    if (score === 20) foods.push(spawnFood());
+                }
+            });
+
+            if (!ate) snake.pop();
+            snake.unshift(newHead);
+        }
+
+        function draw() {
+            ctx.fillStyle = "#008080";
+            ctx.fillRect(0, 0, 400, 400);
+
+            let murenaColor = "#ff00ff"; // Fucsia
+            if (score >= 10) murenaColor = "#ffffff"; // Bianco
+            if (score >= 20) murenaColor = "#ffd700"; // Oro
+
+            snake.forEach((part, i) => {
+                ctx.fillStyle = (i === 0) ? murenaColor : pSBC(-0.3, murenaColor);
+                ctx.fillRect(part.x, part.y, grid-1, grid-1);
+                if (i === 0) {
+                    ctx.fillStyle = "#000";
+                    ctx.fillRect(part.x+4, part.y+4, 3, 3); ctx.fillRect(part.x+12, part.y+4, 3, 3);
+                }
+            });
+
+            foods.forEach(f => {
+                ctx.fillStyle = "#ffcc00";
+                ctx.beginPath();
+                ctx.moveTo(f.x + grid/2, f.y); ctx.lineTo(f.x, f.y + grid); ctx.lineTo(f.x + grid, f.y + grid);
+                ctx.closePath(); ctx.fill();
+            });
+        }
+
+        function animateDeath() {
+            ctx.fillStyle = "#008080"; ctx.fillRect(0, 0, 400, 400);
+            mDeathVel += 0.8; mDeathY += mDeathVel;
+            let murenaColor = (score < 10) ? "#ff00ff" : (score < 20 ? "#ffffff" : "#ffd700");
+            ctx.fillStyle = murenaColor;
+            ctx.fillRect(snake[0].x, mDeathY, grid, grid);
+            if (mDeathY < 450) requestAnimationFrame(animateDeath);
+            else { gameActive = false; document.getElementById("msg").innerText = "SYSTEM_FAILURE"; overlay.style.display = "flex"; }
+        }
+
+        function pSBC(p,c){let n=p<0,b=n?p*-1:p,f=parseInt(c.slice(1),16),t=n?0:255,r=f>>16,g=f>>8&255,l=f&255;return"#"+(16777216+(Math.round((t-r)*b)+r)*65536+(Math.round((t-g)*b)+g)*256+(Math.round((t-l)*b)+l)).toString(16).slice(1)}
+    </script>
+</body>
+</html>
