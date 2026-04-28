@@ -15,9 +15,25 @@
             width: 100%; max-width: 800px; background: #c0c0c0; 
             border-top: 2px solid #fff; border-left: 2px solid #fff;
             border-bottom: 2px solid #000; border-right: 2px solid #000;
-            padding: 8px; display: flex; justify-content: space-between;
-            margin-bottom: 10px; box-sizing: border-box; font-weight: bold;
+            padding: 8px; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; box-sizing: border-box; font-weight: bold; font-size: 14px;
         }
+        
+        /* STILE TASTO BACK WIN95 */
+        #back-btn {
+            background: #c0c0c0; 
+            border-top: 2px solid #fff; border-left: 2px solid #fff;
+            border-bottom: 2px solid #808080; border-right: 2px solid #808080;
+            padding: 2px 8px; 
+            text-decoration: none; color: #000; 
+            font-size: 11px; font-weight: bold;
+            display: flex; align-items: center;
+        }
+        #back-btn:active { 
+            border-top: 2px solid #808080; border-left: 2px solid #808080;
+            border-bottom: 2px solid #fff; border-right: 2px solid #fff;
+        }
+
         #canvas-container { 
             position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; 
             border-radius: 20px; background: #111;
@@ -69,15 +85,17 @@
         /* Adattamento per schermi piccoli (es. telefoni in verticale) */
         @media (max-width: 600px) {
             .arcade-btn { padding: 15px 10px; font-size: 12px; }
-            #header-bar { font-size: 10px; }
+            #header-bar { font-size: 10px; padding: 4px; }
         }
     </style>
 </head>
 <body>
 
 <div id="header-bar">
+    <a href="index.html" id="back-btn">← DESKTOP</a>
+    
     <span>STUDIO MURENA: MUSICAL FIGHTERS</span>
-    <span>ARCADE SYS VER 3.0 (MOBILE EDITION)</span>
+    <span>VER 3.1</span>
 </div>
 
 <div id="canvas-container">
