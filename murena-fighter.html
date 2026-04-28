@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Studio Murena: Musical Fighters</title>
+    <style>
+        body { 
+            background: #008080; margin: 0; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; height: 100vh; overflow: hidden; 
+            font-family: 'MS Sans Serif', Tahoma, Geneva, sans-serif; 
+            touch-action: none; /* Impedisce al browser di scrollare mentre giochi su mobile */
+        }
+        #header-bar {
+            width: 100%; max-width: 800px; background: #c0c0c0; 
+            border-top: 2px solid #fff; border-left: 2px solid #fff;
+            border-bottom: 2px solid #000; border-right: 2px solid #000;
+            padding: 8px; display: flex; justify-content: space-between;
+            margin-bottom: 10px; box-sizing: border-box; font-weight: bold;
+        }
+        #canvas-container { 
+            position: relative; width: 100%; max-width: 800px; aspect-ratio: 16/9; 
+            border-radius: 20px; background: #111;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 50px rgba(0,255,255,0.15); overflow: hidden; 
+        }
+        canvas { 
+            width: 100%; height: 100%; display: block; 
+            image-rendering: pixelated; filter: contrast(1.1) saturate(1.2); 
+        }
+        #canvas-container::after {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%);
+            background-size: 100% 4px; border-radius: 20px;
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.9); pointer-events: none; z-index: 2;
+        }
+        
+        /* CONTROLLI MOBILE STILE WIN95 */
+        #mobile-controls {
+            margin-top: 15px; display: flex; justify-content: space-between;
+            width: 100%; max-width: 800px; padding: 0 10px; box-sizing: border-box;
+            user-select: none; /* Impedisce di evidenziare il testo tappando */
+        }
+        .control-group { display: flex; gap: 8px; }
+        
+        .arcade-btn {
+            background: #c0c0c0; color: #000; 
+            border-top: 3px solid #fff; border-left: 3px solid #fff;
+            border-bottom: 3px solid #808080; border-right: 3px solid #808080;
+            padding: 12px 15px; font-family: 'MS Sans Serif', Tahoma, sans-serif; 
+            font-weight: bold; font-size: 14px; cursor: pointer; user-select: none;
+            touch-action: manipulation;
+        }
+        .arcade-btn:active { 
+            border-top: 3px solid #808080; border-left: 3px solid #808080;
+            border-bottom: 3px solid #fff; border-right: 3px solid #fff;
+            background: #a0a0a0;
+        }
+        .btn-red {
+            background: #c23616; color: #fff;
+            border-top: 3px solid #ff7979; border-left: 3px solid #ff7979;
+            border-bottom: 3px solid #600000; border-right: 3px solid #600000;
+        }
+        .btn-red:active {
+            background: #990033;
+            border-top: 3px solid #600000; border-left: 3px solid #600000;
+            border-bottom: 3px solid #ff7979; border-right: 3px solid #ff7979;
+        }
+        
+        /* Adattamento per schermi piccoli (es. telefoni in verticale) */
+        @media (max-width: 600px) {
+            .arcade-btn { padding: 15px 10px; font-size: 12px; }
+            #header-bar { font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="header-bar">
+    <span>STUDIO MURENA: MUSICAL FIGHTERS</span>
+    <span>ARCADE SYS VER 3.0 (MOBILE EDITION)</span>
+</div>
+
+<div id="canvas-container">
+    <canvas id="gameCanvas" width="800" height="450"></canvas>
+</div>
+
+<div id="mobile-controls">
+    <div class="control-group">
+        <button id="btn-left" class="arcade-btn">◀</button>
+        <button id="btn-right" class="arcade-btn">▶</button>
+    </div>
+    <div class="control-group">
+        <button id="btn-up" class="arcade-btn">▲ SALTA</button>
+        <button id="btn-space" class="arcade-btn btn-red">👊 ATTACCA / OK</button>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+
+// --- GESTIONE IMMAGINI E ASSET ---
+const spriteData = {
+    idle: { frames: 4, speed: 10 },
+    walk: { frames: 6, speed: 6 },
+    attack: { frames: 5, speed: 5 },
+    hurt: { frames: 3, speed: 8 }
+};
+
+const charactersInfo = [
+    { id: 'ferraz', name: 'FERRAZ' },
+    { id: 'carma', name: 'CARMA' },
+    { id: 'nan', name: 'NAN' },
+    { id: 'mauri', name: 'MAURI' },
+    { id: 'falcon', name: 'FALCON' }
+];
+
+const images = {};
+let imagesLoaded = 0;
+let totalImages = (charactersInfo.length * 4) + 1; 
+
+const bgImage = new Image();
+bgImage.src = 'assets/stage.png';
+bgImage.onload = () => imagesLoaded++;
+bgImage.onerror = () => alert("ERRORE: Manca assets/stage.png");
+
+charactersInfo.forEach(char => {
+    images[char.id] = {};
+    ['idle', 'walk', 'attack', 'hurt'].forEach(anim => {
+        let img = new Image();
+        img.src = `assets/${char.id}_${anim}.png`;
+        img.onload = () => imagesLoaded++;
+        img.onerror = () => console.error("Manca il file: assets/" + char.id + "_" + anim + ".png");
+        images[char.id][anim] = img;
+    });
+});
+
+// --- VARIABILI GLOBALI ---
+let state = "LOADING"; 
+let frameCounter = 0;
+let p1Index = 0, cpuIndex = 0;
+let p1, cpu;
+let matchTimer = 99;
+const keys = {};
+
+// --- SISTEMA DI INPUT IBRIDO (TASTIERA + TOUCH) ---
+function simulateKey(code, isDown) {
+    keys[code] = isDown;
+    if (isDown && (state === "SELECT" || state === "GAMEOVER")) {
+        handleMenuInput(code);
+    }
+}
+
+// Supporto Tastiera
+window.addEventListener('keydown', e => simulateKey(e.code, true));
+window.addEventListener('keyup', e => simulateKey(e.code, false));
+
+// Supporto Bottoni a Schermo
+const setupButton = (btnId, keyCode) => {
+    const btn = document.getElementById(btnId);
+    // Mouse (Desktop)
+    btn.addEventListener('mousedown', e => { e.preventDefault(); simulateKey(keyCode, true); });
+    btn.addEventListener('mouseup', e => { e.preventDefault(); simulateKey(keyCode, false); });
+    btn.addEventListener('mouseleave', e => { e.preventDefault(); simulateKey(keyCode, false); });
+    // Touch (Mobile)
+    btn.addEventListener('touchstart', e => { e.preventDefault(); simulateKey(keyCode, true); });
+    btn.addEventListener('touchend', e => { e.preventDefault(); simulateKey(keyCode, false); });
+};
+
+setupButton('btn-left', 'ArrowLeft');
+setupButton('btn-right', 'ArrowRight');
+setupButton('btn-up', 'ArrowUp');
+setupButton('btn-space', 'Space');
+
+
+// --- CLASSE COMBATTENTE ---
+class Fighter {
+    constructor(x, y, charData, isP1) {
+        this.x = x; this.y = y;
+        this.charId = charData.id; this.name = charData.name;
+        this.isP1 = isP1;
+        this.hp = 100;
+        this.vx = 0; this.vy = 0;
+        this.grounded = true;
+        this.facingRight = isP1;
+        
+        this.currentState = 'idle';
+        this.animFrame = 0;
+        this.animTimer = 0;
+        this.attackHitboxActive = false;
+        
+        this.spriteSize = 128; 
+        this.drawScale = 1.8;  
+        this.hitboxW = 40;     
+        this.hitboxH = 100;
+        this.floorY = 350 - this.hitboxH;
+    }
+
+    setAnimState(newState) {
+        if (this.currentState !== newState) {
+            this.currentState = newState;
+            this.animFrame = 0;
+            this.animTimer = 0;
+            this.attackHitboxActive = false;
+        }
+    }
+
+    update() {
+        this.vy += 0.8; 
+        this.y += this.vy;
+        this.x += this.vx;
+
+        if (this.y >= this.floorY) {
+            this.y = this.floorY;
+            this.vy = 0; 
+            this.grounded = true;
+        }
+
+        if (this.x < 0) this.x = 0;
+        if (this.x + this.hitboxW > 800) this.x = 800 - this.hitboxW;
+
+        let animConf = spriteData[this.currentState];
+
+        if (this.currentState === 'attack') {
+            if (this.animFrame === 2 && !this.attackHitboxActive) {
+                this.checkHit();
+                this.attackHitboxActive = true;
+            }
+        }
+
+        if (this.currentState === 'hurt' && this.grounded) {
+            this.vx *= 0.8;
+            if (Math.abs(this.vx) < 0.5) this.vx = 0;
+        }
+
+        if (this.currentState !== 'attack' && this.currentState !== 'hurt') {
+            if (this.vx !== 0 && this.grounded) this.setAnimState('walk');
+            else if (this.vx === 0 && this.grounded) this.setAnimState('idle');
+        }
+
+        this.animTimer++;
+        if (this.animTimer >= animConf.speed) {
+            this.animTimer = 0;
+            this.animFrame++;
+            
+            if (this.animFrame >= animConf.frames) {
+                if (this.currentState === 'attack' || this.currentState === 'hurt') {
+                    this.setAnimState('idle');
+                } else {
+                    this.animFrame = 0; 
+                }
+            }
+        }
+    }
+
+    attack() {
+        if (this.currentState !== 'attack' && this.currentState !== 'hurt' && this.grounded) {
+            this.setAnimState('attack');
+        }
+    }
+
+    takeDamage(amount, pushDirection) {
+        if (this.currentState !== 'hurt') {
+            this.hp -= amount;
+            this.vy = -6; 
+            this.vx = pushDirection * 6; 
+            this.setAnimState('hurt');
+        }
+    }
+
+    checkHit() {
+        let target = this.isP1 ? cpu : p1;
+        if (!target) return;
+
+        let range = 65; 
+        let attackX = this.facingRight ? this.x + this.hitboxW : this.x - range;
+        
+        let hit = !(attackX > target.x + target.hitboxW || 
+                    attackX + range < target.x || 
+                    this.y > target.y + target.hitboxH || 
+                    this.y + 50 < target.y);
+
+        if (hit && target.currentState !== 'hurt') {
+            target.takeDamage(10, this.facingRight ? 1 : -1);
+        }
+    }
+
+    draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.beginPath(); ctx.ellipse(this.x + this.hitboxW/2, 350, 30, 6, 0, 0, Math.PI*2); ctx.fill();
+
+        let img = images[this.charId][this.currentState];
+        if (!img || !img.complete) return;
+
+        let drawW = this.spriteSize * this.drawScale;
+        let drawH = this.spriteSize * this.drawScale;
+        
+        let drawX = this.x - (drawW / 2) + (this.hitboxW / 2);
+        let drawY = this.y - (drawH) + this.hitboxH + 20; 
+
+        ctx.save();
+        if (!this.facingRight) {
+            ctx.translate(drawX + drawW, drawY);
+            ctx.scale(-1, 1);
+            drawX = 0; drawY = 0; 
+        }
+
+        ctx.drawImage(
+            img, 
+            this.animFrame * this.spriteSize, 0, 
+            this.spriteSize, this.spriteSize,    
+            drawX, drawY,                        
+            drawW, drawH                         
+        );
+        ctx.restore();
+    }
+}
+
+// --- LOGICA MENU E LOOP ---
+function handleMenuInput(code) {
+    if (state === "SELECT") {
+        if (code === 'ArrowRight') p1Index = (p1Index + 1) % charactersInfo.length;
+        if (code === 'ArrowLeft') p1Index = (p1Index - 1 + charactersInfo.length) % charactersInfo.length;
+        if (code === 'Space') {
+            do {
+                cpuIndex = Math.floor(Math.random() * charactersInfo.length);
+            } while (cpuIndex === p1Index); 
+
+            p1 = new Fighter(200, 200, charactersInfo[p1Index], true);
+            cpu = new Fighter(550, 200, charactersInfo[cpuIndex], false);
+            matchTimer = 99; 
+            state = "FIGHT";
+        }
+    } else if (state === "GAMEOVER" && code === 'Space') {
+        state = "SELECT";
+    }
+}
+
+function updateGame() {
+    if (state === "LOADING") {
+        if (imagesLoaded >= totalImages) state = "SELECT";
+        return;
+    }
+
+    frameCounter++;
+    if (state === "FIGHT") {
+        if (frameCounter % 60 === 0 && matchTimer > 0) matchTimer--;
+        if (matchTimer <= 0 || p1.hp <= 0 || cpu.hp <= 0) state = "GAMEOVER";
+
+        if (p1.currentState !== 'attack' && p1.currentState !== 'hurt') p1.facingRight = p1.x < cpu.x;
+        if (cpu.currentState !== 'attack' && cpu.currentState !== 'hurt') cpu.facingRight = cpu.x < p1.x;
+
+        // Input P1
+        p1.vx = 0;
+        if (p1.currentState !== 'hurt' && p1.currentState !== 'attack') {
+            if (keys['ArrowRight']) p1.vx = 5;
+            if (keys['ArrowLeft']) p1.vx = -5;
+            if (keys['ArrowUp'] && p1.grounded) { p1.vy = -14; p1.grounded = false; }
+            if (keys['Space']) p1.attack();
+        }
+
+        // IA CPU 
+        if (cpu.currentState !== 'hurt' && cpu.currentState !== 'attack') {
+            cpu.vx = 0;
+            let dist = Math.abs(p1.x - cpu.x);
+            if (dist > 65) {
+                cpu.vx = cpu.x > p1.x ? -3.5 : 3.5;
+            } else {
+                if (Math.random() < 0.04) cpu.attack();
+            }
+        }
+
+        p1.update(); 
+        cpu.update();
+    }
+}
+
+function drawGame() {
+    if (bgImage.complete) {
+        ctx.drawImage(bgImage, 0, 0, 800, 450);
+    } else {
+        ctx.fillStyle = "#000"; ctx.fillRect(0,0,800,450); 
+    }
+
+    if (state === "LOADING") {
+        ctx.fillStyle = "#fff"; ctx.font = "30px 'Courier New'"; ctx.textAlign = "center";
+        ctx.fillText(`CARICAMENTO ASSET... ${Math.floor((imagesLoaded/totalImages)*100)}%`, 400, 225);
+    } 
+    else if (state === "SELECT") {
+        ctx.fillStyle = "rgba(0,0,0,0.7)"; ctx.fillRect(0,0,800,450);
+        ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.font = "bold 30px 'MS Sans Serif'";
+        ctx.fillText("SELECT YOUR MUSICAL FIGHTER", 400, 100);
+
+        charactersInfo.forEach((char, i) => {
+            let x = 120 + i * 115;
+            if (i === p1Index) { ctx.fillStyle = "#ffcc00"; ctx.fillRect(x-5, 195, 100, 100); }
+            ctx.fillStyle = "#333"; ctx.fillRect(x, 200, 90, 90);
+            
+            if (images[char.id] && images[char.id].idle && images[char.id].idle.complete) {
+                ctx.drawImage(images[char.id].idle, 0, 0, 128, 128, x-20, 180, 130, 130);
+            }
+            ctx.fillStyle = "#fff"; ctx.font = "14px 'MS Sans Serif'"; ctx.fillText(char.name, x+45, 320);
+        });
+        ctx.fillStyle = "#0ff"; ctx.fillText("Usa le frecce/tasti per scegliere", 400, 400);
+    } 
+    else if (state === "FIGHT" || state === "GAMEOVER") {
+        p1.draw(); cpu.draw();
+
+        ctx.fillStyle = "#f00"; ctx.fillRect(50, 30, 300, 20); ctx.fillRect(450, 30, 300, 20);
+        ctx.fillStyle = "#0f0"; ctx.fillRect(50, 30, Math.max(0, p1.hp*3), 20);
+        ctx.fillRect(450 + (300 - Math.max(0, cpu.hp*3)), 30, Math.max(0, cpu.hp*3), 20);
+        
+        ctx.fillStyle = "#fff"; ctx.font = "bold 20px 'MS Sans Serif'"; ctx.textAlign = "left";
+        ctx.fillText(p1.name, 50, 20); ctx.textAlign = "right"; ctx.fillText(cpu.name, 750, 20);
+        
+        ctx.textAlign = "center"; ctx.font = "bold 30px 'Courier New'"; ctx.fillText(matchTimer, 400, 45);
+
+        if (state === "GAMEOVER") {
+            ctx.fillStyle = "rgba(0,0,0,0.7)"; ctx.fillRect(0,0,800,450);
+            ctx.fillStyle = "#fff"; ctx.font = "50px 'MS Sans Serif'";
+            let msg = p1.hp <= 0 && cpu.hp <= 0 ? "DOUBLE K.O." : (p1.hp <= 0 ? "CPU WINS" : "YOU WIN!");
+            ctx.fillText(msg, 400, 220);
+            ctx.font = "20px 'Courier New'"; ctx.fillText("PREMI OK PER USCIRE", 400, 280);
+        }
+    }
+}
+
+function loop() { updateGame(); drawGame(); requestAnimationFrame(loop); }
+loop();
+</script>
+</body>
+</html>
