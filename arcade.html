@@ -87,12 +87,12 @@ assetNames.forEach(name => {
     img[key].src = PATH + name;
 });
 
-// Configurazione Frame 
+// Configurazione Frame: ORA TUTTI GLI HURT HANNO 4 FRAME!
 const CONF = {
-    mclovin: { w: 128, h: 128, frames: { idle: 4, walk: 6, attack: 4, hurt: 3 }, speed: 8 },
-    nacho: { w: 128, h: 128, frames: { idle: 4, walk: 6, attack: 4, hurt: 3 }, speed: 10 },
-    baba: { w: 128, h: 128, frames: { idle: 4, walk: 6, attack: 4, hurt: 3 }, speed: 10 },
-    murena: { w: 128, h: 128, frames: { idle: 4, walk: 6, attack: 4, hurt: 3 }, speed: 10 }
+    mclovin: { w: 128, h: 128, frames: { idle: 4, walk: 6, attack: 4, hurt: 4 }, speed: 8 },
+    nacho: { w: 128, h: 128, frames: { idle: 4, walk: 6, attack: 4, hurt: 4 }, speed: 10 },
+    baba: { w: 128, h: 128, frames: { idle: 4, walk: 6, attack: 4, hurt: 4 }, speed: 10 },
+    murena: { w: 128, h: 128, frames: { idle: 4, walk: 6, attack: 4, hurt: 4 }, speed: 10 }
 };
 
 function drawSprite(type, action, x, y, timer, flip = false) {
@@ -103,9 +103,16 @@ function drawSprite(type, action, x, y, timer, flip = false) {
     if (!image || !image.complete || image.naturalWidth === 0) return;
 
     const frameCount = c.frames[action] || 4;
-    // Se l'azione è hurt, possiamo farla un pelo più lenta
-    const speed = action === "hurt" ? c.speed + 4 : c.speed;
-    const col = Math.floor(timer / speed) % frameCount;
+    // La velocità dell'animazione. Per "hurt" possiamo tenerla identica per godercela tutta
+    const speed = c.speed; 
+    
+    // Se è in "hurt", vogliamo che l'animazione si fermi all'ultimo frame quando cadono a terra
+    let col = Math.floor(timer / speed);
+    if (action === "hurt" && col >= frameCount) {
+        col = frameCount - 1; // Blocca sull'ultimo frame (quello a terra)
+    } else {
+        col = col % frameCount; // Animazione in loop normale
+    }
 
     ctx.save();
     ctx.translate(x, y);
@@ -141,6 +148,7 @@ function update() {
         if (player.y > 250) { player.y = 250; player.vy = 0; player.grounded = true; }
 
         // Gestione Azione Player
+        // L'invulnerabilità del player è 40 frame, perfetti per l'animazione di hurt a 4 frame!
         player.action = "idle";
         if (keys["ArrowRight"] && player.punching === 0) { player.punching = 15; cameraShake = 5; }
         if (!player.grounded) player.action = "walk";
@@ -183,6 +191,8 @@ function update() {
                     // Colpisce McLovin se non è invulnerabile
                     if (player.invul === 0) {
                         hp--; player.invul = 40; cameraShake = 15; 
+                        // Resetta il timer di mclovin per far partire l'animazione da zero
+                        player.animFrame = 0; 
                         if(hp <= 0) state = "GAMEOVER";
                     }
                 } else {
@@ -193,8 +203,9 @@ function update() {
 
                 // Collisione Pugno di McLovin contro Nemico
                 if (player.punching > 0 && Math.abs(pX - eX) < 85 && Math.abs(player.y - e.y) < 80) {
-                    e.hurtTimer = 15; // Manda il nemico in stato di "Hurt" per 15 frame
-                    e.timer = 0; // Resetta il timer così l'animazione riparte da zero
+                    // 40 frame di timer = l'animazione a 4 frame (con speed 10) arriva proprio all'ultimo disegno!
+                    e.hurtTimer = 40; 
+                    e.timer = 0; // Resetta il timer così l'animazione riparte da zero perfettamente
                 }
             }
         }
@@ -202,6 +213,9 @@ function update() {
         particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.life--; if(p.life<0) particles.splice(i, 1); });
     }
 }
+
+// Per McLovin passiamo un timer animazione separato che si resetta per l'hurt
+let playerAnimTimer = 0;
 
 function draw() {
     ctx.save();
@@ -213,8 +227,12 @@ function draw() {
     else { ctx.fillStyle = "#222"; ctx.fillRect(0,0,800,450); }
 
     if (state === "PLAY") {
-        // Player (lampeggia se ha preso danno)
-        if (player.invul === 0 || frame % 4 < 2) {
+        // Player
+        if (player.action === "hurt") {
+            // Se sta prendendo danno usa il suo invul timer rovesciato per far scorrere i frame
+            drawSprite("mclovin", player.action, player.x, player.y, 40 - player.invul, false);
+        } else if (player.invul === 0 || frame % 4 < 2) {
+            // Lampeggia appena finito il colpo grosso
             drawSprite("mclovin", player.action, player.x, player.y, frame, false);
         }
         
