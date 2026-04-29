@@ -15,7 +15,7 @@
         }
         #monitor-bezel {
             width: 95vw; max-width: 900px;
-            aspect-ratio: 4 / 3;
+            aspect-ratio: 4 / 3; /* Proporzioni desktop */
             background: var(--monitor-color);
             border-radius: 30px; padding: 15px;
             box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 30px 60px rgba(0,0,0,0.8);
@@ -49,7 +49,15 @@
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
             grid-auto-rows: min-content;
             gap: 15px; z-index: 2; 
+            overflow-y: auto; /* Permette al desktop di scorrere se pieno */
+            min-height: 0; /* Assicura che la flexbox non spinga via la taskbar */
         }
+        
+        /* Modifica la scrollbar per adattarla allo stile retro (opzionale) */
+        #desktop::-webkit-scrollbar { width: 8px; }
+        #desktop::-webkit-scrollbar-track { background: #008080; }
+        #desktop::-webkit-scrollbar-thumb { background: #c0c0c0; border: 1px solid #fff; }
+
         .icon { width: 80px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px #000; text-decoration: none; font-size: 11px; font-weight: bold; }
         .icon span { font-size: 35px; display: block; margin-bottom: 5px; }
 
@@ -57,7 +65,7 @@
         .title-bar { background: linear-gradient(90deg, #000080, #1084d0); color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
         .window-content { padding: 12px; color: #000; font-size: 13px; overflow-y: auto; max-height: 45vh; }
         
-        #taskbar { height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 2px 5px; z-index: 100; }
+        #taskbar { height: 35px; min-height: 35px; background: #c0c0c0; border-top: 3px outset #fff; display: flex; align-items: center; padding: 2px 5px; z-index: 100; }
         #glitch-clock { 
             margin-left: auto; padding: 0 10px; font-weight: bold; 
             border-left: 2px inset #fff; background: #bdbdbd; 
@@ -65,6 +73,47 @@
         }
         button { background: #c0c0c0; border: 2px outset #fff; cursor: pointer; font-weight: bold; font-family: inherit; font-size: 12px; padding: 2px 8px; }
         button:active { border-style: inset; }
+
+        /* ========================================= */
+        /* OTTIMIZZAZIONI PER SCHERMI PICCOLI (MOBILE) */
+        /* ========================================= */
+        @media (max-width: 600px) {
+            #monitor-bezel {
+                aspect-ratio: 3 / 4; /* Rende il monitor più verticale sui telefoni */
+                padding: 8px;
+                border-width: 6px;
+                border-radius: 20px;
+            }
+            #screen {
+                border-width: 6px;
+            }
+            #desktop {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); /* Griglia più stretta */
+                gap: 10px;
+                padding: 10px;
+            }
+            .icon {
+                width: 60px; /* Icone più piccole */
+                font-size: 9px; /* Testo più piccolo */
+            }
+            .icon span {
+                font-size: 26px; /* Emoji/Icona più piccola */
+                margin-bottom: 3px;
+            }
+            .window {
+                width: 90%;
+                left: 5% !important; /* Centra le finestre su mobile */
+                top: 10% !important;
+            }
+            #taskbar {
+                height: 30px;
+                min-height: 30px;
+            }
+            #glitch-clock {
+                font-size: 10px;
+                padding: 0 5px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -91,7 +140,7 @@
                 </div>
             </div>
 
-            <div id="win-spotify" class="window" style="top:15%; right:5%; width:280px;">
+            <div id="win-spotify" class="window" style="top:15%; right:5%; max-width: 300px;">
                 <div class="title-bar"><span>Spotify_Player</span><button onclick="closeWin('win-spotify')">X</button></div>
                 <div class="window-content" style="padding:5px;">
                     <iframe style="border-radius:8px" src="https://open.spotify.com/embed/artist/3Bf0pBvF90uVUnK79H9uS2" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
